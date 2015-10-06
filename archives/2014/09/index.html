@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Archives: 2014/9 | 妄想神社</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="妄想神社">
+<meta property="og:url" content="http://superhex.github.io/archives/2014/09/index.html">
+<meta property="og:site_name" content="妄想神社">
+<meta property="og:description">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="妄想神社">
+<meta name="twitter:description">
+  
+    <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53630436-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">妄想神社</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学院派的Haskell信徒 ｜ 人生苦短，我用Python ｜ 脑洞一时爽，填坑修罗场</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://superhex.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-Y-Combinator" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/09/12/Y-Combinator/" class="article-date">
+  <time datetime="2014-09-12T13:33:04.000Z" itemprop="datePublished">9月 12 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/12/Y-Combinator/">［译］The Y Combinator</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>原文地址：<a href="https://medium.com/@ayanonagon/the-y-combinator-no-not-that-one-7268d8d9c46" target="_blank" rel="external">猛击这里</a></p>
+<p>博主竟然还是萌妹（误。</p>
+<hr>
+<p>当你看到“Y Combinator”的时候会想到什么？如果你和我们一样，你大概会想到那家位于加利福尼亚的风投公司（比较为人所知的应该是<a href="news.ycombinator.com">Hacker News</a>。</p>
+<p>嗯，这里所说的是不动点组合子。下面是它最初的形式：</p>
+<blockquote>
+<p>λf. (λx. f (x x))(λx. f (x x))</p>
+</blockquote>
+<p>不不，请不要逃跑！（的确很想就是了…）这是为什么Y Combinator为什么以它命名的原因… 某种意义上它确实很酷。</p>
+<p>为了理解究竟<code>λf. (λx. f (x x))(λx. f (x x))</code>是什么意思和它能够做什么，首先我们要先了解一些lambda演算的基础。</p>
+<p>注：如果你对函数式编程感兴趣或者对它好奇，我想你一定会享受这篇文章。如果并没有完全理解，没关系，这篇文章又不会消失！</p>
+<p>译注：为了便于理解下文的内容，需要说明一下lambda演算中的符号表示，即：</p>
+<ul>
+<li><em>λx y. x+y</em> 表示一个匿名函数，其接受<em>x y</em>作为参数，并返回<em>x+y</em></li>
+<li>函数式编程中，函数调用的形式是 <em>(f x y)</em> 而不是 <em>f(x y)</em></li>
+<li>符号”:=”代表”等于”的意思</li>
+</ul>
+<h2 id="Lambda_演算">Lambda 演算</h2><hr>
+<p>Lambda演算（或λ－演算）是在1930年被Alonzo Church作为一种表达计算的形式系统（formal system for expressing computation）发明的。尽管其中有“微积分”一词（calculus），它却与牛顿和莱布尼兹发明的微积分相差很远。事实上，它在计算机领域的应用要比数学上要多，就我们大多数人所知。</p>
+<p>有效的Lambda表达式可以用归纳法如下定义：<br><a name="rule1"></a></p>
+<ol>
+<li>一个变量 <strong>x</strong> 是一个有效的Lambda表达式<br><a name="rule2"></a></li>
+<li>如果 <strong>t</strong> 是一个有效的Lambda表达式并且 <strong>x</strong> 是一个变量，那么 <strong>λx. t</strong> 是一个有效的Lambda表达式<br><a name="rule3"></a></li>
+<li>如果 <strong>t</strong> 和 <strong>s</strong> 都是有效的Lambda表达式，那么 <strong>t s</strong> 是一个有效的Lambda表达式 </li>
+</ol>
+<p>用例子来说明可能会更加形象。让我们从草稿开始构建一些Lambda表达式。之后我们会探讨它们的含义…</p>
+<p>基于规则1，我们可以构造这样的Lambda表达式：</p>
+<blockquote>
+<p>x<br>y</p>
+</blockquote>
+<p>很好，这些看起来还不错。下面让我们看看用规则2能做什么。<br>既然我们已经有了合法的表达式 <strong>x</strong> 和 <strong>y</strong> 我们可以创造：</p>
+<blockquote>
+<p>λx. x<br>λy. y<br>λx. y<br>λy. x</p>
+</blockquote>
+<p>然后是规则3:</p>
+<blockquote>
+<p>x x<br>x y<br>(λx. x) y<br>(λy. y) x<br>(λx. x) (λx. x)<br>(λy. y) (λx. x)<br>…</p>
+</blockquote>
+<p>小练习：试着写一些你自己的Lambda表达式。</p>
+<hr>
+<p>现在让我们来看看刚刚写下的Lambda表达式。</p>
+<p>λx. x也被称作恒等函数（identify function）。<strong>λx</strong>. x &lt;-这里加粗的x可以被解释为输入，λx. <strong>x</strong> &lt;-这里加粗的x可以被解释为输出。也就是说，这个函数取一个输入x，然后输出相同的x。</p>
+<p>如果你用一些支持Lambda的语言，比如Ruby，你可能已经见过这样的写法：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i = -&gt;(x) &#123; x &#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果你斜过来看一会，你可能会发现-&gt;符号有些像λ。</p>
+<p>那么什么是λx. y？这是所谓的常函数。它忽略输入x然后返回y。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c = -&gt;(x)&#123; y &#125;</span><br></pre></td></tr></table></figure></p>
+<p>你可能会问，“λy. y是不是恒等函数？“ 的确。λx. x和λy. y是 <strong>α-恒等</strong>(α-equivalent)的。事实上，以下这些都是α-恒等的：</p>
+<blockquote>
+<p>λx. x<br>λy. y<br>λz. z<br>λ☃. ☃</p>
+</blockquote>
+<p>这将带领我们来到对 <strong>约束变量</strong> 和 <strong>自由变量</strong> 的讨论。</p>
+<h2 id="##约束变量_vs-_自由变量">##约束变量 vs. 自由变量</h2><p>一个<strong>约束</strong>变量是在<em>λ</em> 的表达式中出现的变量并与参数具有相同的名字。一个<strong>自由</strong>变量是一个不是约束变量的变量。</p>
+<p>举个例子，<em>x</em> 在 <em>λx. x</em> 中是一个约束变量，在 <em>(λy.y)x</em> 中是自由变量（传入参数）。</p>
+<p>关于约束变量比较特殊的一点是你可以任意的重命名他们，只要对所有的变量应用就没问题。如果两个λ表达式在经过重命名后是一样的，那么就称他们是 <strong>α相等（α-equivalent）</strong>。</p>
+<p>来看一个实际的例子：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m = -&gt;(horrible_variable_name) &#123; horrible_variable_name * y &#125;</span><br></pre></td></tr></table></figure></p>
+<p>在这个例子中，把<code>horrible_variable_name</code>（约束变量）重命名是很安全的（例如x）：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m = -&gt;(x) &#123; x * y &#125;</span><br></pre></td></tr></table></figure></p>
+<p>注意，你不能去重命名<em>y</em>，因为它是在区域外被定义的。或许<em>y</em>被定义为数字<code>2</code>，并且<code>m</code>是一个函数将自己的输入乘以<code>2</code>。如果我们直接讲<em>y</em>重命名为<em>z</em>（让我们假设它被定义为<code>0</code>），m将会变成一个永远返回<code>0</code>的函数呢。</p>
+<h2 id="##函数应用">##函数应用</h2><p>太酷了，我们有了函数！但是它的参数是什么呢？这时野生的规则3就跳出来了！</p>
+<blockquote>
+<p>如果 <strong>t</strong> 和 <strong>s</strong> 都是有效的Lambda表达式，那么 <strong>t s</strong> 是一个有效的Lambda表达式</p>
+</blockquote>
+<p><em>(λx.x)y</em> 就是一个函数应用的例子。更具体的说，它表示了以<em>y</em>作为传入参数时对函数<em>λx.x</em>的调用。</p>
+<p>我们可以使用 <strong>β－规约（β-reduction）</strong>来化简（reduce）一个函数应用。</p>
+<p>β－规约告诉我们表达式 <em>(λx. t) s</em> 可以被化简为 <em>t [x := s]</em> 读作“表达式t中所有的x都被替换为s“（t where all bound occurrences of x in t are substituted for s）</p>
+<p>举个例子，将在<em>x</em>中所有的约束出现（在这个例子中恰好也是x）替换为<em>x</em>我们可以将 <em>(λx. x) s</em> 化简为 <em>s</em>。</p>
+<blockquote>
+<p>(λx. x) s<br>x [x := s]<br>s</p>
+</blockquote>
+<p>这样，我们看到 <em>λx. x</em> 做了和我们期待中的恒等函数一模一样的事情。</p>
+<p>另一件值得一提的事情是我们可以定义一个获取多于一个参数的函数，基于λ表达式的递归定义。</p>
+<p>译注：这里想要说明的应该是函数的柯里化（Currying）。关于柯里化，可以参见<a href="http://zh.wikipedia.org/wiki/%E6%9F%AF%E9%87%8C%E5%8C%96" target="_blank" rel="external">维基百科</a></p>
+<p>举个例子，看一下这个表达式：</p>
+<blockquote>
+<p>λy.(λx. x) y</p>
+</blockquote>
+<p>然后喂给它两个参数，<em>a</em> 和 <em>b</em>：</p>
+<blockquote>
+<p>(λy.(λx. x) y) a b<br>((λx. x) y) [y := a]) b<br>(λx. x) a b<br>(x [x := a]) b<br>a b</p>
+</blockquote>
+<p>注意这里的函数应用是左结合的，即：</p>
+<blockquote>
+<p>(λy.(λx. x) y) a b = (((λy.(λx. x) y) a) b)</p>
+</blockquote>
+<p>现在来看一下这个表达式：</p>
+<blockquote>
+<p>(λx. x x)(λx. x x)</p>
+</blockquote>
+<p>试着对它用一下β－规约？</p>
+<blockquote>
+<p>(λx. x x)(λx. x x)<br>(x x) [x := (λx. x x)]<br>(λx. x x)(λx. x x)</p>
+</blockquote>
+<p>等等。我们是不是又回到了开始？我们刚刚发现了 <strong>Ω (omega)</strong> ，一个分歧组合子（divergent combinator）。当一个表达式不具备 <strong>β-范式(β-normal form)</strong> 的时候，就称它是分歧的。当一个lambda表达式不能被β-规约的时候，就称它表现出β-范式。一个组合子就是一个没有自由变量的lambda表达式。</p>
+<p>你们不对无限递归感到好奇吗？（笑</p>
+<p>谈到递归，我们怎么在lambda演算中定义类似于递归函数呢？用Ruby写起来可能像这样：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fact</span><span class="params">(n)</span></span></span><br><span class="line">  <span class="keyword">if</span> n == <span class="number">0</span></span><br><span class="line">    <span class="number">1</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    n * fact(n-<span class="number">1</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>这个函数有什么特殊之处呢？它引用了自身。你可能会说类似”噢，这不过是递归而已“这样的话，不过你很可能会对lambda演算中不允许这种类型的自我引用感到吃惊，至少不是直接引用。</p>
+<hr>
+<p>自我引用是一种如此简单却强大的概念，允许了像下面这句话一样对存在性的好奇。</p>
+<blockquote>
+<p>This statement is false. （这个命题是错误的。）</p>
+</blockquote>
+<p>那么，这个命题为真吗？如果它为真，那么它是假的；如果它为假，那么它是真的。</p>
+<p>再来一些命题如何？</p>
+<blockquote>
+<p>The statement below is true.（下面这个命题是真的）<br>The statement above is false.（上面这个命题是假的）</p>
+</blockquote>
+<p>如果这引起了你的好奇心，那么我推荐你读一下Douglas Hofstadter的 <em>Gödel, Escher, Bach</em>（译注：中文名似乎叫 <em>GEB:集异璧之大成</em> 传说中原作者参与翻译的中译本，不可多得的奇书）。到目前为止我只读了一半，感觉就像在埃舍尔的迷宫中漫游一样。相信我，迷失在其中是值得的，但是我好像跑题了（笑。</p>
+<p><img src="https://d262ilb51hltx0.cloudfront.net/max/995/1*qoIjQtBaEhxT2RgjWWD6fg.jpeg" alt="Escher&#39;s labyrinth"></p>
+<p>那么，我们是如何在不采用自我引用的情况下达到自我引用呢？我想是时候回顾一下我们的神秘朋友，Y不动点组合子了。</p>
+<h2 id="##终焉，Y_Combinator">##终焉，Y Combinator</h2><p>来回顾一下我们的老朋友：</p>
+<blockquote>
+<p>λf. (λx. f (x x))(λx. f (x x))</p>
+</blockquote>
+<p>希望现在你对它感到更加熟悉了（笑。</p>
+<p>现在回到阶乘函数。如果函数允许自我引用，我们就能写出如下定义：</p>
+<blockquote>
+<p>f := λx.(if x == 0 then 1 else x * f (x–1))</p>
+</blockquote>
+<p>但是很显然，我们已经知道这么做是不被允许的。那么，让我们回溯几步然后试一些完全不同的东西。让我们定义一个完全的lambda表达式<em>F</em> 以<em>f</em>作为参数：</p>
+<blockquote>
+<p>F := λf. λx.(if x == 0 then 1 else x * f (x–1))</p>
+</blockquote>
+<p>但是若想做到这一点，我们需要一些东西来使<em>F</em>启动，即提供给参数<em>f</em>一个初始值。此外，我们需要一个<em>p</em>使得<em>Fp</em>等于<em>p</em>。</p>
+<p>这不仅仅是因为<em>p</em>是我们将要传入<em>f</em>（伪递归函数）这个λ表达式体中的值，同时也因为我们想要<em>Fp</em>能够完成和<em>p</em>自己能够完成的相同的事情，即允许指代它自己，而不是被当作参数传入。</p>
+<p>以上这一段落对我来说是最棘手的一部分，它悄悄地介绍了没有直接自我引用的自我引用。所以在我们继续前进之前确保你已经理解了为什么我们要让<em>Fp</em>和<em>p</em>相等。请再读一遍吧（笑。</p>
+<p>那么，换句话说，我们想要找到<em>F</em>的一个不动点。在数学的定义上，一个函数的<strong>不动点</strong>就是使得<em>f(x) 等于 x</em>的x取值。举个例子，对于函数f(x) = x * x，0和1就是它的不动点。</p>
+<p>顺着这个想法，如果我们找到一个<em>F</em>的不动点<em>p</em>使得<em>Fp</em>等于<em>p</em>，我们就可以用<em>Fp</em>或者<em>p</em>（它们是同一种东西）作为那个没有直接自我引用的“递归函数”。</p>
+<p>显然对于任意的λ表达式<em>f</em>，<em>(λx. f (x x))(λx. f (x x))</em>是它的一个不动点。</p>
+<p>让我们看看这是怎么一回事。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X = (&#955;x. f (x x))(&#955;x. f (x x))&#10;X = f (x x) [x := &#955;x. f (x x)]&#10;X = f ((&#955;x. f (x x)) (&#955;x. f (x x)))&#10;X = f X</span><br></pre></td></tr></table></figure>
+<p>你可以看到，对于任意的函数<em>f</em>，输入<em>X</em>保持不变。</p>
+<p>得知了这一点，我们就可以构造一个函数，其参数为一个函数<em>f</em>并返回它的不动点：</p>
+<blockquote>
+<p>λf. (λx. f (x x))(λx. f (x x))</p>
+</blockquote>
+<p>没错，这就是我们的Y-combinator，Y不动点组合子。它返回任意函数<em>f</em>的不动点。让我们称呼它为<em>Y</em>。对于任意函数<em>f</em>，<em>Yf</em>是<em>f</em>的一个不动点，换句话说，<em>f(Yf)</em>和<em>Yf</em>是相等的。事实上，出于这个原因，Y－不动点组合子也被称为不动点组合子。</p>
+<p>那么现在，我们可以令<em>p = Yf</em>来满足<em>Fp</em>等于<em>p</em>的要求。为了驱动这个函数，我们可以令<em>p</em>作为<em>F</em>的参数来得到<em>F(YF)</em>，它恰好等于<em>YF</em>。现在我们已经准备好了。</p>
+<p>现在让我们看看用它来实现阶乘会发生什么。试着喂给它一个3。</p>
+<blockquote>
+<p>YF 3<br>F(YF) 3<br>λf. λx.(if x == 0 then 1 else x <em> f (x–1)) (YF) 3<br>λx.(if x == 0 then 1 else x </em> (YF)(x–1)) 3<br>if 3 == 0 then 1 else 3 <em> (YF)(3–1)<br>3 </em> (YF) 2<br>3 <em> F(YF) 2<br>3 </em> (λf. λx.(if x == 0 then 1 else x <em> f (x–1)) (YF) 2)<br>3 </em> (λx.(if x == 0 then 1 else x <em> (YF)(x–1)) 2)<br>3 </em> (if 2 == 0 then 1 else 2 <em> (YF)(2–1))<br>3 </em> (2 <em> (YF) 1)<br>6 </em> (YF) 1<br>6 <em> F(YF) 1<br>6 </em> (λf. λx.(if x == 0 then 1 else x <em> f (x–1)) (YF) 1)<br>6 </em> (λx.(if x == 0 then 1 else x <em> (YF)(x–1)) 1)<br>6 </em> (if 1 == 0 then 1 else 1 <em> (YF)(1–1))<br>6 </em> (YF) 0<br>6 <em> F(YF) 0<br>6 </em> (λf. λx.(if x == 0 then 1 else x <em> f (x–1)) (YF) 0)<br>6 </em> (if 0 == 0 then 1 else 0<em> (YF)(0–1))<br>6 </em> 1<br>6</p>
+</blockquote>
+<p>…现在你得到它了。</p>
+<blockquote>
+<p>3! = 6</p>
+</blockquote>
+<p>以上。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="ciffizz3p000jc7s6wsuu6c15" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2014/09/12/Y-Combinator/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/函数式编程/">函数式编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-记Arduino中的一些坑" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/09/04/记Arduino中的一些坑/" class="article-date">
+  <time datetime="2014-09-04T03:51:22.000Z" itemprop="datePublished">9月 4 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/04/记Arduino中的一些坑/">记Arduino中的一些坑</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>长期不定时更新。</p>
+<h2 id="1-Multiple_Defination问题">1.Multiple Defination问题</h2><p>问题表现: 编译失败，提示函数多重定义却又不给出首次定义地点。</p>
+<p>错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Error</span> <span class="type">Compiling</span></span><br><span class="line"><span class="type">Control</span>.cpp:<span class="number">53</span>: multiple definition <span class="keyword">of</span> `<span class="type">TrueControl</span>(double, double, double)'</span><br><span class="line"><span class="type">Control</span>.cpp.o:<span class="type">Control</span>.cpp:<span class="number">53</span>: first defined here</span><br></pre></td></tr></table></figure></p>
+<p>错误原因: 猜测编译器会忽略后缀为<code>.cpp</code>文件中的<code>#ifndef</code>？总之还是老老实实写一个<code>.h</code>和一个<code>.cpp</code>准没错。</p>
+<p>解决办法: </p>
+<ul>
+<li>将出错文件名后缀改为<code>.h</code>即可。(&lt;-不规范)</li>
+<li>将函数定义单独放到<code>.h</code>文件中并使用<code>#ifndef ... #define... #endif</code>(&lt;-规范，未测试)</li>
+</ul>
+<h2 id="2-Uploading问题">2.Uploading问题</h2><p>问题表现: 成功编译，但上传失败。</p>
+<p>错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Problem</span> <span class="type">Uploading</span> to board</span><br><span class="line"><span class="title">avrdude</span>: stk500_recv(): programmer is not responding</span><br><span class="line"></span><br><span class="line"><span class="comment">-- or</span></span><br><span class="line"></span><br><span class="line"><span class="type">Clock</span> not synchronize</span><br></pre></td></tr></table></figure></p>
+<p>错误原因: 常见于Arduino mini等没有直接USB接口的设备。原因为设备没有引出时钟线导致时钟不同步。</p>
+<p>解决办法: 上传的一瞬间按下<code>Reset</code>按键即可，也可以按住在上传的一瞬间松开。</p>
+<h2 id="3-Double_Include问题">3.Double Include问题</h2><p>问题表现: 不定。</p>
+<p>常见错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">'<span class="type">XXX'</span> was not declared <span class="keyword">in</span> this scope</span><br><span class="line"></span><br><span class="line"><span class="comment">-- or</span></span><br><span class="line"></span><br><span class="line">'<span class="type">XXX'</span> does not name a <span class="typedef"><span class="keyword">type</span></span></span><br></pre></td></tr></table></figure></p>
+<p>错误原因: 你以为Include了，实际上并没有。</p>
+<p>解决办法: 将所有需要的头文件在<code>.ino</code>文件头再次<code>#include</code>一次。当然不要忘记在头文件里加入<code>#ifndef</code>。</p>
+<p>解释&amp;吐槽: 这个问题简直坑死爹了好吗！翻了好久才在Arduino论坛上找到。老外的解释是:<br><cite><br>Arduino的编译器会将当前文件夹下用得到的文件拷贝到一个临时目录中进行编译（这也是为什么Arduino会要求将文件移到文件夹中），而编译器只会将.ino文件中包含的文件视作需要编译的文件（绕口令）。所以会无视包含中的包含。<br></cite><br>也就是说，如果你有一个这样的包含关系:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">| <span class="type">Arduino</span>.ino</span><br><span class="line">    | library.h</span><br><span class="line">        | sublibrary.h</span><br><span class="line">        | math.h</span><br><span class="line">    |lib.h</span><br></pre></td></tr></table></figure></p>
+<p>而只在<code>Arduino.h</code>中包含了<code>library.h</code>,<code>lib.h</code>那么在编译的时候编译器将不会拷贝<code>sublibrary.h</code>和<code>math.h</code>从而导致编译失败。</p>
+<p>待续。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/" data-id="ciffizz3j0008c7s6yoks2db4" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Arduino/">Arduino</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+  
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/10/06/Monad习作二则/">[开个大坑] Monad习作二则</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/12/Y-Combinator/">［译］The Y Combinator</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/04/记Arduino中的一些坑/">记Arduino中的一些坑</a>
+          </li>
+        
+          <li>
+            <a href="/2014/08/26/使用IPV6隧道科学上网/">使用IPv6隧道科学上网</a>
+          </li>
+        
+          <li>
+            <a href="/2014/08/19/四轴飞行器完全指南0x01/">四轴飞行器完全指南0x01 - Arduino、姿态解算和滤波</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Ruihan Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">关于</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'coderenaissance';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+  </div>
+</body>
+</html>

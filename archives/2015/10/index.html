@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Archives: 2015/10 | 妄想神社</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="妄想神社">
+<meta property="og:url" content="http://superhex.github.io/archives/2015/10/index.html">
+<meta property="og:site_name" content="妄想神社">
+<meta property="og:description">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="妄想神社">
+<meta name="twitter:description">
+  
+    <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53630436-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">妄想神社</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学院派的Haskell信徒 ｜ 人生苦短，我用Python ｜ 脑洞一时爽，填坑修罗场</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://superhex.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-Monad习作二则" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/10/06/Monad习作二则/" class="article-date">
+  <time datetime="2015-10-06T12:05:04.000Z" itemprop="datePublished">10月 6 2015</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/06/Monad习作二则/">[开个大坑] Monad习作二则</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>虽说一直很懒不过发现神社已经有一年多的时间没有打理的时候还是很吃惊。想想真是惭愧，不过没有人来参拜果然还是没有什么动力更新呢（趴）。</p>
+<p>说起来这一年里几乎没干什么值得一提的事情。一如往常地挖了好多的坑，填上的也没有几个。最大的收获或许就是Haskell终于感觉入了一点门，虽然依然不太敢用来写程序就是了。</p>
+<p>那么！今天的主角自然就是Haskell了，准确的说应该就是这个名声在外的<code>Monad</code>（笑）。</p>
+<p>诶等等别跑啊我还没说完呢！</p>
+<p>在这里吾辈自然是不会说什么</p>
+<blockquote>
+<p>Monad不过是自函子范畴上的幺半群而已，不懂的都是⑨！</p>
+</blockquote>
+<p>之类的老梗啦ww 毕竟有关Monad的教程实在是太多了，所以这里吾辈只是简单谈谈对于Monad的理解。</p>
+<h3 id="TL;DR">TL;DR</h3><p><strong>Monad就是可编程的分号。</strong></p>
+<p>对于新手而言对这句话肯定是一头雾水吧ww 其实配合例子来看非常简单。</p>
+<p>那么现在假设我们要做一个数字电子线路的仿真系统。让我们要求高一点，这个系统要有<em>时延</em>。于是我们可以用这么个类型来表达这些信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">newtype  Signal a = Signal &#123; time :: Int, value :: a &#125;</span><br></pre></td></tr></table></figure>
+<p>非常简单，对吧？这个类型实际上就可以看作附加了时间上下文（<code>time :: Int</code>）的值。</p>
+<p>有了基本的表示类型，下面我们来表示一些基本元件。假设我们的需求很简单，只需要非门就够了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">notGate :: a -&#62; Signal a&#10;notGate something = Signal &#123; time = 1, value = not something &#125;</span><br></pre></td></tr></table></figure>
+<p>对于任何传进来的信号，我们的非门将它附加一个非门时延，然后将输入取反。</p>
+<p>那么现在问题来了。这个非门如何处理已经带有一个时延的信号？当然，我们在创建基本类型的时候用了<code>Record Syntax</code>，所以可以构造这样一个函数，对每个<code>Signal a</code>，将其中的<code>value</code>送给非门，将时延相加。于是可以这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bind :: Signal a -&#62; (a -&#62; Signal b) -&#62; Signal b&#10;bind (Signal t s) f = let r = f s&#10;                      in r &#123; time = time r + t &#125;</span><br></pre></td></tr></table></figure>
+<p>到这里，其实你已经实现了Monad的核心了。剩下的无非是实现<code>return</code>。对于普通的值，我们希望它的时延为0:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">instance Monad Signal where&#10;&#9;return a = Signal 0 a&#10;&#9;(Signal t s) &#62;&#62;= f = let r = f s&#10;&#9;                in r &#123; time = time r + t &#125;</span><br></pre></td></tr></table></figure>
+<p>就是这么简单。现在我们可以享受Haskell的<code>do</code>语法糖了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delay2 :: a -&#62; Signal a&#10;delay2 a = do&#10;&#9;t &#60;- notGate a&#10;&#9;notGate t</span><br></pre></td></tr></table></figure>
+<p>你看，<code>Monad</code>不过也就是这么个小儿科的东西。它只不过是一种保持你所定义的类型所附带的额外信息的结构罢了。现在再回想一下前面那句“Monad就是可编程的分号”是不是感觉明白了很多呢。</p>
+<p>P.S. 关于为什么只实现了非门，其实是由于这种模拟方法处理时间有一点麻烦… 例如与门，就需要处理时间同步的问题。这里就不涉及了。</p>
+<p>下面放上最初的两个习作，也正是实现了这两种<code>Monad</code>吾辈才感觉差不多理解了<code>Monad</code>。下一步就要去研究<code>Monad Transformer</code>了，是个更大更深的坑呢。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-- Monad implemented here.&#10;-- beacuse since GHC 7.10 there must be&#10;-- Functor =&#62; Applicative =&#62; Monad&#10;-- so we have to build it from scratch&#10;newtype M a = M &#123; time :: Int, value :: a &#125; &#10;            deriving (Show, Eq)&#10;&#10;instance Functor M where&#10;    f `fmap` a = a &#123; value = f (value a) &#125;&#10;&#10;instance Applicative M where&#10;    pure = M 0&#10;    (M t f) &#60;*&#62; s = fmap f (s &#123; time = time s + t&#125; )&#10;&#10;instance Monad M where&#10;    return = pure&#10;    (M t s) &#62;&#62;= f = let r = f s&#10;                    in r &#123; time = time r + t&#125;&#10;&#10;&#10;-- A more complicated one&#10;newtype T a = T &#123; runT :: Int -&#62; a &#125;&#10;&#10;instance Monad T where&#10;    return a = T $ const a&#10;    x &#62;&#62;= f = T $ \t -&#62; runT (f (runT x t)) t&#10;    -- x :: (Int -&#62; a)&#10;    -- f :: a -&#62; (Int -&#62; a)&#10;&#10;instance Applicative T where&#10;    pure = return&#10;    (T f) &#60;*&#62; x = T $ \t -&#62; f t (runT x t)&#10;&#10;instance Functor T where&#10;    f `fmap` a = T $ \t -&#62; f (runT a t)</span><br></pre></td></tr></table></figure>
+<p>关于为什么第二个实现是倒序的… 螃蟹卡农。嗯。</p>
+<p>今天的幻想乡也很和平呢。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="ciffizz2m0000c7s6cb40oxev" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2015/10/06/Monad习作二则/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/瞎扯/">瞎扯</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/脑洞/">脑洞</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+  
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/10/06/Monad习作二则/">[开个大坑] Monad习作二则</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/12/Y-Combinator/">［译］The Y Combinator</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/04/记Arduino中的一些坑/">记Arduino中的一些坑</a>
+          </li>
+        
+          <li>
+            <a href="/2014/08/26/使用IPV6隧道科学上网/">使用IPv6隧道科学上网</a>
+          </li>
+        
+          <li>
+            <a href="/2014/08/19/四轴飞行器完全指南0x01/">四轴飞行器完全指南0x01 - Arduino、姿态解算和滤波</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Ruihan Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">关于</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'coderenaissance';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+  </div>
+</body>
+</html>
