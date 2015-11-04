@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: Python | 妄想神社</title>
+  <title>Archives: 2015/11 | 妄想神社</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description">
 <meta property="og:type" content="website">
 <meta property="og:title" content="妄想神社">
-<meta property="og:url" content="http://superhex.github.io/tags/Python/index.html">
+<meta property="og:url" content="http://superhex.github.io/archives/2015/11/index.html">
 <meta property="og:site_name" content="妄想神社">
 <meta property="og:description">
 <meta name="twitter:card" content="summary">
@@ -77,10 +77,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-四轴飞行器完全指南0x01" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Implementing-a-JIT-compiled-Language" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/08/19/四轴飞行器完全指南0x01/" class="article-date">
-  <time datetime="2014-08-19T01:22:00.000Z" itemprop="datePublished">8月 19 2014</time>
+    <a href="/2015/11/01/Implementing-a-JIT-compiled-Language/" class="article-date">
+  <time datetime="2015-11-01T14:02:38.000Z" itemprop="datePublished">11月 1 2015</time>
 </a>
     
   </div>
@@ -91,7 +91,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/19/四轴飞行器完全指南0x01/">四轴飞行器完全指南0x01 - Arduino、姿态解算和滤波</a>
+      <a class="article-title" href="/2015/11/01/Implementing-a-JIT-compiled-Language/">使用Haskell和LLVM实现JIT编译的语言 0x00</a>
     </h1>
   
 
@@ -99,65 +99,77 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>说来这个“好想做个四轴飞行器玩啊”的想法不知不觉就已经一个年头了呢，谁能想到当年这么随便的一个脑洞如今变成了学校的科研项目OTZ 既然拿了人家的经费，也就没有不把它做出来的道理，于是就这样愉快地把过程记录下来吧！</p>
-<p>#目录</p>
-<ul>
-<li>开发板的制作<ul>
-<li>有关Arduino的两三事<ul>
-<li><a href="#前期准备"> 前期准备 </a></li>
-<li><a href="#I2C"> I2C总线 </a></li>
-<li><a href="#UART"> UART总线 </a></li>
-<li><a href="#MPU6050"> MPU6050（GY－85）模块 </a></li>
-<li>nrf24l01模块</li>
-</ul>
-</li>
-<li>有关算法<ul>
-<li><a href="#姿态解算"> 什么是姿态解算？</a></li>
-<li><a href="#滤波"> 加上一点滤波！</a></li>
-</ul>
-</li>
-<li>使用PID来控制电机<ul>
-<li>PID.h</li>
-<li>Servo.h<br>＋ 飞行器的制作</li>
-</ul>
-</li>
-<li>制作自己的PCB<ul>
-<li>有关KiCAD</li>
-<li>绘制原理图</li>
-<li>生成PCB</li>
-</ul>
-</li>
-<li>如何焊接与组装<ul>
-<li>焊接贴片原件的技巧</li>
-<li>组装</li>
-</ul>
-</li>
-<li>烧写程序<ul>
-<li>什么是BootLoader？</li>
-<li>如何烧写BootLoader？</li>
-<li>Done Uploading</li>
-</ul>
-</li>
-<li>第一次试飞</li>
-</ul>
-</li>
-</ul>
+        <p>这篇文章翻译自<a href="http://www.stephendiehl.com/llvm/" target="_blank" rel="external">Stephen Diehl的Blog</a>，鉴于原文的长度，这将会是个天坑。</p>
+<p>那么，为什么要翻译这篇文章呢？主要还是由于Stephen Diehl大神的文章实在是让人大开眼界（特别是<a href="http://dev.stephendiehl.com/hask/" target="_blank" rel="external">这篇</a>，当初看过LYAH之后就该直接来刷这个的，简直跟翻开一本黑魔法书一样）。并且，这篇blog的深度正好适合“入门”之后的中级Haskeller。这个项目从头到尾自己敲一遍基本上Haskell的种种特性就熟悉了（笑）。</p>
+<p>注：本文会夹杂大量私货，同时会补充原文中不易理解的地方，如有错误还请指正。</p>
+<p>那么，在开始之前，先放上目录吧。</p>
 <hr>
-<p>那么，开始制作吧！<br>
-        
-          <p class="article-more-link">
-            <a href="/2014/08/19/四轴飞行器完全指南0x01/#more">Read More</a>
-          </p>
-        
+<h4 id="Chapter_1_(引言)">Chapter 1 (引言)</h4><ul>
+<li>设置</li>
+<li>基本语言</li>
+<li>LLVM 介绍</li>
+<li>完整源码</li>
+</ul>
+<h4 id="Chapter_2_(语法分析(Parser)和抽象语法树(AST))">Chapter 2 (语法分析(Parser)和抽象语法树(AST))</h4><ul>
+<li>Parser组合子(Parser Combinator)</li>
+<li>词法分析器(Lexer)</li>
+<li>语法分析器(Parser)</li>
+<li>REPL</li>
+<li>完整源码</li>
+</ul>
+<h4 id="Chapter_3_(代码生成)">Chapter 3 (代码生成)</h4><ul>
+<li>Haskell LLVM绑定</li>
+<li>代码生成设置</li>
+<li>代码块(Blocks)</li>
+<li>指令(Instruction)</li>
+<li>从抽象语法树到中间语言(IR)</li>
+<li>完整源码</li>
+</ul>
+<h4 id="Chapter_4_(JIT_和优化器支持)">Chapter 4 (JIT 和优化器支持)</h4><ul>
+<li>抽象语法树和模块(Modules)</li>
+<li>常量折叠(Constant Folding)</li>
+<li>Optimization Passes(优化阶段？)</li>
+<li>添加一个JIT编译器</li>
+<li>外部函数</li>
+<li>完整源码</li>
+</ul>
+<h4 id="Chapter_5_(控制流)">Chapter 5 (控制流)</h4><ul>
+<li>“if”表达式</li>
+<li>“for”循环表达式</li>
+<li>完整源码</li>
+</ul>
+<h4 id="Chapter_6_(运算符)">Chapter 6 (运算符)</h4><ul>
+<li>用户定义的运算符</li>
+<li>二元运算符</li>
+<li>一元运算符</li>
+<li>Kicking the Tires  &lt;- 这个太不好翻译了（逃</li>
+<li>完整源码</li>
+</ul>
+<h4 id="Chapter_7_(变量)">Chapter 7 (变量)</h4><ul>
+<li>为什么这是一个困难的问题</li>
+<li>LLVM中的内存</li>
+<li>变量</li>
+<li>赋值</li>
+<li>完整源码</li>
+</ul>
+<h4 id="Chapter_8_(结语)">Chapter 8 (结语)</h4><ul>
+<li>教程总结</li>
+</ul>
+<h4 id="Chapter_9_(附录)">Chapter 9 (附录)</h4><ul>
+<li>命令行工具</li>
+</ul>
+<p>如果有时间的话大概会实现一些扩展功能，到时候再加上吧。</p>
+<hr>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/" data-id="cigkyjhuw00072n20gvepbm71" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cigkyjhtk00002n20tpa5zumj" class="article-share-link">Share</a>
       
-        <a href="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Arduino/">Arduino</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/脑洞/">脑洞</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/［Haskell］/">［Haskell］</a></li></ul>
 
     </footer>
   </div>
