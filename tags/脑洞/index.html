@@ -111,28 +111,28 @@
 <h3 id="TL;DR">TL;DR</h3><p><strong>Monad就是可编程的分号。</strong></p>
 <p>对于新手而言对这句话肯定是一头雾水吧ww 其实配合例子来看非常简单。</p>
 <p>那么现在假设我们要做一个数字电子线路的仿真系统。让我们要求高一点，这个系统要有<em>时延</em>。于是我们可以用这么个类型来表达这些信息：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">newtype  Signal a = Signal &#123; time :: Int, value :: a &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">newtype</span>  <span class="type">Signal</span> a = <span class="type">Signal</span> <span class="container">&#123; <span class="title">time</span> :: <span class="type">Int</span>, <span class="title">value</span> :: <span class="title">a</span> &#125;</span></span></span><br></pre></td></tr></table></figure>
 <p>非常简单，对吧？这个类型实际上就可以看作附加了时间上下文（<code>time :: Int</code>）的值。</p>
 <p>有了基本的表示类型，下面我们来表示一些基本元件。假设我们的需求很简单，只需要非门就够了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">notGate :: a -&#62; Signal a&#10;notGate something = Signal &#123; time = 1, value = not something &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">notGate</span> :: a -&gt; <span class="type">Signal</span> a</span><br><span class="line"><span class="title">notGate</span> something = <span class="type">Signal</span> &#123; time = <span class="number">1</span>, value = not something &#125;</span><br></pre></td></tr></table></figure>
 <p>对于任何传进来的信号，我们的非门将它附加一个非门时延，然后将输入取反。</p>
 <p>那么现在问题来了。这个非门如何处理已经带有一个时延的信号？当然，我们在创建基本类型的时候用了<code>Record Syntax</code>，所以可以构造这样一个函数，对每个<code>Signal a</code>，将其中的<code>value</code>送给非门，将时延相加。于是可以这样：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bind :: Signal a -&#62; (a -&#62; Signal b) -&#62; Signal b&#10;bind (Signal t s) f = let r = f s&#10;                      in r &#123; time = time r + t &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">bind</span> :: <span class="type">Signal</span> a -&gt; (a -&gt; <span class="type">Signal</span> b) -&gt; <span class="type">Signal</span> b</span><br><span class="line"><span class="title">bind</span> (<span class="type">Signal</span> t s) f = <span class="keyword">let</span> r = f s</span><br><span class="line">                      <span class="keyword">in</span> r &#123; time = time r + t &#125;</span><br></pre></td></tr></table></figure>
 <p>到这里，其实你已经实现了Monad的核心了。剩下的无非是实现<code>return</code>。对于普通的值，我们希望它的时延为0:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">instance Monad Signal where&#10;&#9;return a = Signal 0 a&#10;&#9;(Signal t s) &#62;&#62;= f = let r = f s&#10;&#9;                in r &#123; time = time r + t &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">Signal</span> <span class="keyword">where</span></span></span><br><span class="line">truereturn a = <span class="type">Signal</span> <span class="number">0</span> a</span><br><span class="line">true(<span class="type">Signal</span> t s) &gt;&gt;= f = <span class="keyword">let</span> r = f s</span><br><span class="line">true                <span class="keyword">in</span> r &#123; time = time r + t &#125;</span><br></pre></td></tr></table></figure>
 <p>就是这么简单。现在我们可以享受Haskell的<code>do</code>语法糖了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delay2 :: a -&#62; Signal a&#10;delay2 a = do&#10;&#9;t &#60;- notGate a&#10;&#9;notGate t</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">delay2</span> :: a -&gt; <span class="type">Signal</span> a</span><br><span class="line"><span class="title">delay2</span> a = <span class="keyword">do</span></span><br><span class="line">truet &lt;- notGate a</span><br><span class="line">truenotGate t</span><br></pre></td></tr></table></figure>
 <p>你看，<code>Monad</code>不过也就是这么个小儿科的东西。它只不过是一种保持你所定义的类型所附带的额外信息的结构罢了。现在再回想一下前面那句“Monad就是可编程的分号”是不是感觉明白了很多呢。</p>
 <p>P.S. 关于为什么只实现了非门，其实是由于这种模拟方法处理时间有一点麻烦… 例如与门，就需要处理时间同步的问题。这里就不涉及了。</p>
 <p>下面放上最初的两个习作，也正是实现了这两种<code>Monad</code>吾辈才感觉差不多理解了<code>Monad</code>。下一步就要去研究<code>Monad Transformer</code>了，是个更大更深的坑呢。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-- Monad implemented here.&#10;-- beacuse since GHC 7.10 there must be&#10;-- Functor =&#62; Applicative =&#62; Monad&#10;-- so we have to build it from scratch&#10;newtype M a = M &#123; time :: Int, value :: a &#125; &#10;            deriving (Show, Eq)&#10;&#10;instance Functor M where&#10;    f `fmap` a = a &#123; value = f (value a) &#125;&#10;&#10;instance Applicative M where&#10;    pure = M 0&#10;    (M t f) &#60;*&#62; s = fmap f (s &#123; time = time s + t&#125; )&#10;&#10;instance Monad M where&#10;    return = pure&#10;    (M t s) &#62;&#62;= f = let r = f s&#10;                    in r &#123; time = time r + t&#125;&#10;&#10;&#10;-- A more complicated one&#10;newtype T a = T &#123; runT :: Int -&#62; a &#125;&#10;&#10;instance Monad T where&#10;    return a = T $ const a&#10;    x &#62;&#62;= f = T $ \t -&#62; runT (f (runT x t)) t&#10;    -- x :: (Int -&#62; a)&#10;    -- f :: a -&#62; (Int -&#62; a)&#10;&#10;instance Applicative T where&#10;    pure = return&#10;    (T f) &#60;*&#62; x = T $ \t -&#62; f t (runT x t)&#10;&#10;instance Functor T where&#10;    f `fmap` a = T $ \t -&#62; f (runT a t)</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Monad implemented here.</span></span><br><span class="line"><span class="comment">-- beacuse since GHC 7.10 there must be</span></span><br><span class="line"><span class="comment">-- Functor =&gt; Applicative =&gt; Monad</span></span><br><span class="line"><span class="comment">-- so we have to build it from scratch</span></span><br><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">M</span> a = <span class="type">M</span> <span class="container">&#123; <span class="title">time</span> :: <span class="type">Int</span>, <span class="title">value</span> :: <span class="title">a</span> &#125;</span> </span></span><br><span class="line">            <span class="keyword">deriving</span> (<span class="type">Show</span>, <span class="type">Eq</span>)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Functor</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    f `fmap` a = a &#123; value = f (value a) &#125;</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    pure = <span class="type">M</span> <span class="number">0</span></span><br><span class="line">    (<span class="type">M</span> t f) &lt;*&gt; s = fmap f (s &#123; time = time s + t&#125; )</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    return = pure</span><br><span class="line">    (<span class="type">M</span> t s) &gt;&gt;= f = <span class="keyword">let</span> r = f s</span><br><span class="line">                    <span class="keyword">in</span> r &#123; time = time r + t&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">-- A more complicated one</span></span><br><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">T</span> a = <span class="type">T</span> <span class="container">&#123; <span class="title">runT</span> :: <span class="type">Int</span> -&gt; <span class="title">a</span> &#125;</span></span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    return a = <span class="type">T</span> $ const a</span><br><span class="line">    x &gt;&gt;= f = <span class="type">T</span> $ \t -&gt; runT (f (runT x t)) t</span><br><span class="line">    <span class="comment">-- x :: (Int -&gt; a)</span></span><br><span class="line">    <span class="comment">-- f :: a -&gt; (Int -&gt; a)</span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    pure = return</span><br><span class="line">    (<span class="type">T</span> f) &lt;*&gt; x = <span class="type">T</span> $ \t -&gt; f t (runT x t)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Functor</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    f `fmap` a = <span class="type">T</span> $ \t -&gt; f (runT a t)</span><br></pre></td></tr></table></figure>
 <p>关于为什么第二个实现是倒序的… 螃蟹卡农。嗯。</p>
 <p>今天的幻想乡也很和平呢。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cigkyjhv3000j2n20gm36qfzj" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="ciiue4xr1000ig120jqdnuul1" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/10/06/Monad习作二则/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -221,7 +221,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/" data-id="cigkyjhuw00072n20gvepbm71" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/" data-id="ciiue4xqv0006g120bv4d3bpx" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -255,7 +255,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -267,6 +267,14 @@
       <ul>
         
           <li>
+            <a href="/2015/12/31/2015什么的，就这么过完了呢/">2015什么的，就这么过完了呢</a>
+          </li>
+        
+          <li>
+            <a href="/2015/11/21/浅谈编程语言/">编程语言</a>
+          </li>
+        
+          <li>
             <a href="/2015/11/01/Implementing-a-JIT-compiled-Language/">使用Haskell和LLVM实现JIT编译的语言 0x00</a>
           </li>
         
@@ -276,14 +284,6 @@
         
           <li>
             <a href="/2014/09/12/Y-Combinator/">［译］The Y Combinator</a>
-          </li>
-        
-          <li>
-            <a href="/2014/09/04/记Arduino中的一些坑/">记Arduino中的一些坑</a>
-          </li>
-        
-          <li>
-            <a href="/2014/08/26/使用IPV6隧道科学上网/">使用IPv6隧道科学上网</a>
           </li>
         
       </ul>

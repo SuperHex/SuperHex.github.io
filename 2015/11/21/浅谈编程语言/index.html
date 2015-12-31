@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>编程语言 | 妄想神社</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="2015.12.31 update:
+那个…这篇文章写着写着就跑题了，于是也没什么动力写下去了。近期打算重写一下啦。所以先折叠掉~">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编程语言">
+<meta property="og:url" content="http://superhex.github.io/2015/11/21/浅谈编程语言/index.html">
+<meta property="og:site_name" content="妄想神社">
+<meta property="og:description" content="2015.12.31 update:
+那个…这篇文章写着写着就跑题了，于是也没什么动力写下去了。近期打算重写一下啦。所以先折叠掉~">
+<meta property="og:updated_time" content="2015-12-31T15:18:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="编程语言">
+<meta name="twitter:description" content="2015.12.31 update:
+那个…这篇文章写着写着就跑题了，于是也没什么动力写下去了。近期打算重写一下啦。所以先折叠掉~">
+  
+    <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
+  
+  
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53630436-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">妄想神社</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学院派的Haskell信徒 ｜ 人生苦短，我用Python ｜ 脑洞一时爽，填坑修罗场</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://superhex.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-浅谈编程语言" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/11/21/浅谈编程语言/" class="article-date">
+  <time datetime="2015-11-21T13:00:08.000Z" itemprop="datePublished">11月 21 2015</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      编程语言
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>2015.12.31 update:</p>
+<p>那个…这篇文章写着写着就跑题了，于是也没什么动力写下去了。近期打算重写一下啦。所以先折叠掉~</p>
+<a id="more"></a>
+<p>诸君，好久不见。</p>
+<p>这段时间以来虽然一直想写点什么，但无奈脑内还没有什么成体系的想法，也就迟迟没有更新。说来惭愧，目前为止我写过的代码也就几千行，大多数时间还是停留在只看不写的程度，不过有些想法实属不吐不快，就写在这里作为记录吧。</p>
+<p>谈到编程语言，我记忆中第一个接触的语言竟然是C++，回想起来颇有一种戏谑之感。而结局自然也是落败了www。记得当时抱着一本C++二级考试的书（现在想想真是选错教材）对构造函数析构函数满头雾水。是的，那个年代还没有C++11，那本教材里也没有任何高级特性，但是对于一个编程新手而言完全就是天书一般。</p>
+<p>在这之后，我真正认真的开始敲代码是从大学一如既往垃圾的C语言课程开始的。有了之前C++令人头疼的经历之后，学起C来让我又一种清爽的感觉，想做什么只要写一个函数就好了。虽然函数在C里面不是一等公民，传递函数也需要丑陋的指针，但在我那个几百行的大作业里我隐隐感到了某种模式的浮现，尽管我当时还没有能力识别它。</p>
+<p>这之后，我也接触过一段时间的Python。给我的感觉同C++一样，在解决实际问题的时候完全不知道所谓的面向对象面向的到底是什么。大概从那个时候起，我就一直在思考编程语言的idiomatic用法和编程语言范式的问题了吧。</p>
+<h3 id="编程语言的范式之争">编程语言的范式之争</h3><hr>
+<p>程序语言界自古以来争论就没有停止过，有C为代表的命令式，C++之类的面向对象式，Lisp的过程式，Haskell的(纯)函数式等等等等。在这里我打算用我有限的经验来谈谈面向对象式和函数式这两个目前最知名的范式。</p>
+<h4 id="面向对象，面向…对象？">面向对象，面向…对象？</h4><p>面向对象的范式的提出已经是很早以前的事情了，而在那个凡事都还要靠汇编的年代，面向对象的确解决了代码复用与模块化的问题。但是随着软件工程行业向着构建更大更复杂的软件发展，面向对象的模型，就我看来，已经暴露出越来越多的问题。而其中最主要的问题，就是在于面向对象带来的复杂性往往会超过它简化的复杂性。具体说来，体现在以下方面。</p>
+<ul>
+<li><p>面向对象只对有限的事物有自然的表示。换句话说，并不是所有的事物都能表示为一个“对象”，尤其是描述的对象并不是实体的时候，使用面向对象会非常啰嗦。</p>
+</li>
+<li><p>面向对象的复用性与扩展性并不那么好。尤其是混入了各种类中封装的私有函数之后。而经过了复杂的继承之后的某个子类… 相信你不敢轻易去扩展它的方法吧。</p>
+</li>
+<li><p>面向对象重构起来困难重重。当然，这只是写惯了函数式的我的一家之言。不过我认为，面向对象里真正精髓的那部分应当是面向接口编程。不然重构起来那酸爽…</p>
+</li>
+<li><p>面向对象强制使用者自顶向下分解问题。这在某些情境下很好，但是事情往往不是那么简单的。正如现实生活中需求是多变的，今天分解的模块明天或许就不适用了，而结果… 参见前一条。</p>
+</li>
+</ul>
+<p>以上。说到底软件开发过程中最重要的问题就是解决日益增长的复杂性。而从一开始的无知无畏到到现在写过一段时间FP之后再来看，面向对象范式的语言给我最深的印象就是：写起来不放心！给你一个大类，它能保证什么行为？它什么也保证不了！它可能能够完成从书架上取下书这件工作，没准同时也会打翻水杯，顺便烧了邻居家的房子(之后还会更多地谈论副作用这方面)。所以你必须额外去写一大堆的测试用例来保证它大部分情况下是工作正常的。这也正好解释了现在TDD为何如此盛行不是（笑）。所以在我看来啊，与其说面向对象，不如说面向接口、面向测试更好一点呢。</p>
+<h4 id="面向对象的设计模式">面向对象的设计模式</h4><p>设计模式这事其实也分为广义和狭义，广义的自然就是指那24种经典的设计模式(Design Patten)，而狭义的则是更加语言相关的，我喜欢称之为习语(Idiom)的东西，下文的设计模式一词指代的均为广义。由于我还没有仔细研究过设计模式那本书，所以在这里我们只是来谈谈它。</p>
+<p>那么设计模式为什么会出现呢？一方面当然是勤劳的码农们在日夜劳作中发现代码这样写是最优的，而另一方面，广义的设计模式的出现其实意味着程序语言层面抽象能力与组合能力的不足。人都是懒惰的，如果在语言层面就能优雅地表达自己的想法，又何苦去费心思考虑用什么设计模式呢？</p>
+<p>人们都说面向对象有三好：清音、柔体…（划掉）咳咳，封装、继承、多态（咦这也好意思叫多态？）。实际上这些概念并不过时，然而用在有副作用的语言里，总觉得不是那么回事。副作用+封装=引用不透明，换句话说，在给定相同输入的情况下，由于封装起来的对象内部状态是不可见的，输出结果是不能保证一致的。而说到继承与多态（实际上多态也就是相对于继承而言的，做不到任意类型，(void*)黑魔法除外），的确做到了一定程度上的代码复用，但实际写过就会发现继承往往要覆盖父类的一些方法（不然new一个就好了），因此父类中就会有很多虚函数，这不就是面向接口编程嘛。感觉有点偏题了，嗯，OO里面的idiomatic pattern大概就是接口了吧。</p>
+<h4 id="函数式编程">函数式编程</h4><p>其实上面黑了这么多，主要还是函数式写起来实在是太爽了啊。说到函数式语言，和命令式语言最大的区别（也是最不起眼的）可能是在于底层架构的不同了。现今流行的语言基本都是按照冯诺伊曼机的计算模型实现的，而像Haskell这类的函数式语言大都是基于lambda-calculus的计算模型（当然，还是要编译为冯诺伊曼架构来执行的），二者的分歧从最底层就开始了。架构不同，语言的思维方法自然也就不同。面向对象的思想把编程分为数据结构+算法，而我更喜欢的抽象模型，也就是FP函数式语言中频繁出现的模式，即数据+解释器。其中，数据包括了数据结构和计算过程，而一般意义上的解释器，会根据数据采取输入的数据实施真正的计算。模型不依赖计算，计算不依赖整体模型，真正的副作用在计算时才会实施，建模的时候一切都是纯的，这种将计算抽象出模型的做法何其美妙！</p>
+<p>前文提到，函数式语言大都基于lambda演算，所以在函数式语言里不能符合直觉地表达顺序语句。比如这样的代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> answer = <span class="number">42</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"The answer of universal is:"</span> &lt;&lt; answer &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"But what is the question?"</span> &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在函数式语言中表达起来是这样的：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">main</span> = <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">let</span> answer = <span class="number">42</span></span><br><span class="line">    <span class="keyword">in</span> putStrLn $ <span class="string">"The answer of universal is:"</span> ++ show answer</span><br><span class="line">       putStrLn <span class="string">"But what is the question?"</span></span><br></pre></td></tr></table></figure>
+<p>看起来是不是很像？然而这只是Haskell的语法糖罢了。去掉语法糖之后的代码长这个样子：</p>
+<p>（注：Haskell中lambda表达式语法为 \variable -&gt; expression）</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">main</span> = <span class="keyword">let</span> answer = <span class="number">42</span></span><br><span class="line">        <span class="keyword">in</span> putStrLn $ <span class="string">"The answer of universal is:"</span> ++ show answer &gt;&gt;=</span><br><span class="line">           \x -&gt; putStrLn <span class="string">"But what is the question?"</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2015/11/21/浅谈编程语言/" data-id="ciiue4xqt0005g1206in1i0tp" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2015/11/21/浅谈编程语言/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/12/31/2015什么的，就这么过完了呢/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          2015什么的，就这么过完了呢
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/11/01/Implementing-a-JIT-compiled-Language/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">使用Haskell和LLVM实现JIT编译的语言 0x00</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/［Haskell］/">［Haskell］</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/12/31/2015什么的，就这么过完了呢/">2015什么的，就这么过完了呢</a>
+          </li>
+        
+          <li>
+            <a href="/2015/11/21/浅谈编程语言/">编程语言</a>
+          </li>
+        
+          <li>
+            <a href="/2015/11/01/Implementing-a-JIT-compiled-Language/">使用Haskell和LLVM实现JIT编译的语言 0x00</a>
+          </li>
+        
+          <li>
+            <a href="/2015/10/06/Monad习作二则/">[开个大坑] Monad习作二则</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/12/Y-Combinator/">［译］The Y Combinator</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Ruihan Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">关于</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'coderenaissance';
+  
+  var disqus_url = 'http://superhex.github.io/2015/11/21/浅谈编程语言/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+  </div>
+</body>
+</html>
