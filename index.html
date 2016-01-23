@@ -77,6 +77,99 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Continuation-Monad" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/23/Continuation-Monad/" class="article-date">
+  <time datetime="2016-01-23T15:45:10.000Z" itemprop="datePublished">1月 23 2016</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/23/Continuation-Monad/">Continuation Monad</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>啊啊啊啊Github连击又断掉了！好的我们今天来谈Continuation Monad（哭丧脸。</p>
+<p>（施工中…）</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2016/01/23/Continuation-Monad/" data-id="cijraouxr000wjx20mrhqyqz3" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2016/01/23/Continuation-Monad/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Type-family快速教程" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/22/Type-family快速教程/" class="article-date">
+  <time datetime="2016-01-22T14:33:53.000Z" itemprop="datePublished">1月 22 2016</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/22/Type-family快速教程/">Type family快速教程</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近没有什么填的上的坑啊。于是为了Github连击不断，只好在这水一水理论了。</p>
+<p>PS. 发现<a href="http://www.codewars.com" target="_blank" rel="external">Codewars</a>这个站很有意思，有兴趣的可以来互fo：<a href="http://www.codewars.com/users/kokonotsu" target="_blank" rel="external">http://www.codewars.com/users/kokonotsu</a></p>
+<p>好的言归正传，今天来说说type family。</p>
+<h2 id="是什么">是什么</h2><p>type family是GHC用来支持ad-hoc数据类型重载的扩展，相当于<code>data</code> type的<code>type class</code>。两种风味<code>data family</code>和<code>type family</code>，两种定义形式<code>stand alone</code>的和<code>class associated</code>的。写出来是这个样子：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="pragma">&#123;-# LANGUAGE TypeFamilies #-&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- Standalone data family</span></span><br><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="keyword">family</span> <span class="type">XList</span> a</span></span><br><span class="line"><span class="typedef"><span class="keyword">data</span> instance <span class="type">XList</span> <span class="type">Char</span> = <span class="type">XNil</span> | <span class="type">XCons</span> <span class="type">Char</span> <span class="container">(<span class="type">XList</span> <span class="title">a</span>)</span></span></span><br><span class="line"><span class="typedef"><span class="keyword">data</span> instance <span class="type">XList</span> <span class="container">()</span>      = <span class="type">XList</span> <span class="type">Int</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- Standalone type family</span></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="keyword">family</span> <span class="type">GMap</span> k v</span></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> instance <span class="type">GMap</span> <span class="type">Int</span> <span class="type">Int</span> = <span class="type">Map</span> <span class="type">Int</span> <span class="type">Int</span></span></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> instance <span class="type">GMap</span> <span class="container">()</span> a = a</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- Associated form</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">FamilyClass</span> m <span class="keyword">where</span></span></span><br><span class="line">    <span class="typedef"><span class="keyword">data</span> <span class="type">Foo</span> m :: * -&gt; *</span></span><br><span class="line">    <span class="typedef"><span class="keyword">type</span> <span class="type">Bar</span></span></span><br><span class="line">    foobar :: <span class="type">Foo</span> -&gt; <span class="type">Bar</span></span><br><span class="line"><span class="class">    </span><br><span class="line"><span class="keyword">instance</span> <span class="type">FamilyClass</span> <span class="type">Int</span> <span class="keyword">where</span></span></span><br><span class="line">    <span class="typedef"><span class="keyword">data</span> <span class="type">Foo</span> <span class="type">Int</span> v = <span class="type">Foo</span> <span class="container">(<span class="type">Map</span> <span class="type">Int</span> <span class="title">v</span>)</span></span></span><br><span class="line">    <span class="typedef"><span class="keyword">type</span> <span class="type">Bar</span> = [<span class="type">Int</span>]</span></span><br><span class="line">    foobar = ...</span><br></pre></td></tr></table></figure>
+<p>大概就是这样，即构造一个抽象类型，依照不同的类型有不同的实现，但依然有一个统一的接口。按照维基的说法，可以把type family理解成一个类型层面的函数部分应用，即高阶kind。</p>
+<h2 id="为什么">为什么</h2><p>这玩意有什么用？某种意义上来说，它可以取代Functional Dependencies。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="pragma">&#123;-# LANGUAGE FunctionalDependencies, TypeFamilies #-&#125;</span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">class</span> <span class="type">FuncClass</span> a b | b -&gt; a <span class="keyword">where</span></span></span><br><span class="line">    foo :: a -&gt; b -&gt; a</span><br><span class="line"><span class="class">    </span><br><span class="line"><span class="keyword">class</span> <span class="type">FamClass</span> a <span class="keyword">where</span></span></span><br><span class="line">    <span class="typedef"><span class="keyword">data</span> <span class="type">Elem</span> a :: * -&gt; * -&gt; *</span></span><br><span class="line">    bar :: a -&gt; <span class="type">Elem</span> a -&gt; a</span><br></pre></td></tr></table></figure>
+<p>这样。可以避免Multi Parameter Class的出现。同时可以根据具体类型实现不同的优化，颇有一番Dependent Type的味道。</p>
+<h2 id="还有什么？">还有什么？</h2><p>基本用法就是这样了。需要注意的是type family的类型变量是限定在class范围内的。就上面的例子而言，<code>data Elem a</code>中的<code>a</code>必须要与<code>class FamClass a</code>中的<code>a</code>一致。此外还有GHC类型推导的一些坑，可以参照<a href="https://wiki.haskell.org/GHC/Type_families" target="_blank" rel="external">Haskell Wiki</a>。</p>
+<p>以上。是不是速度太快了啊（逃</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cijraoux8000hjx207alg7vma" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2016/01/22/Type-family快速教程/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Monad-Transformer" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/01/21/Monad-Transformer/" class="article-date">
@@ -137,7 +230,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cijofizn4000rby203xy0nkua" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cijraouxl000sjx20t93zy54e" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/21/Monad-Transformer/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -182,7 +275,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cijofizmv000iby20nglvgh5m" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cijraouxb000kjx2094ckwbfv" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -259,53 +352,9 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/" data-id="cijofizld0000by206n43gqes" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/" data-id="cijraouvu0000jx20b9rmurn1" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-浅谈编程语言" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/11/21/浅谈编程语言/" class="article-date">
-  <time datetime="2015-11-21T13:00:08.000Z" itemprop="datePublished">11月 21 2015</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/21/浅谈编程语言/">编程语言</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>2015.12.31 update:</p>
-<p>那个…这篇文章写着写着就跑题了，于是也没什么动力写下去了。近期打算重写一下啦。所以先折叠掉~</p>
-        
-          <p class="article-more-link">
-            <a href="/2015/11/21/浅谈编程语言/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/21/浅谈编程语言/" data-id="cijofizml0005by20gn44pel3" class="article-share-link">Share</a>
-      
-        <a href="http://superhex.github.io/2015/11/21/浅谈编程语言/#disqus_thread" class="article-comment-link">Comments</a>
       
       
     </footer>
@@ -402,7 +451,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cijofizn7000tby20wl8avgdu" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cijraouxp000ujx20lcqktear" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -471,7 +520,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cijofizn0000lby20929vddqe" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cijraouxg000njx20hnbvuhkw" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/10/06/Monad习作二则/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -655,7 +704,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cijofizmt000fby2043bie7zs" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cijraoux6000ejx20iyq978ie" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/09/12/Y-Combinator/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -715,63 +764,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/" data-id="cijofizmg0002by209mdcoiwk" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/" data-id="cijraouwv0002jx20gn8ul8sb" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Arduino/">Arduino</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-使用IPV6隧道科学上网" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/26/使用IPV6隧道科学上网/" class="article-date">
-  <time datetime="2014-08-26T10:05:59.000Z" itemprop="datePublished">8月 26 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/26/使用IPV6隧道科学上网/">使用IPv6隧道科学上网</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>由于一些你我都懂的原因，在这个神奇的国度想要好好上个网简直太难了。虽说现在也有不少成熟的工具来<code>Cross the wall</code>（Windows下强推VPNgate这个工具，Mac下有Shadowsocks不过公有服务器实在太慢），但是多多少少都有一些缺陷。那么什么样的梯子才是好梯子呢？大概要满足这么几个方面</p>
-<ol>
-<li>稳定性。代理的稳定性不用多说，不过鉴于现在GFW的技术也在不断升级，有个稳定免费的代理是越来越难了。</li>
-<li>速度。相信谁也不愿意忍受打开网页都要5s以上的速度。（Shadowsocks的公共服务器太慢也是促成本文的一大原因）</li>
-<li>安全性。这条现在其实与第一条等同了，HTTP不带S简直就是分分钟秒杀。（Goagent好像例外？）明文传输的数据也很容易被抓包啊。</li>
-</ol>
-<p>这三条看起来很好满足，实际上爬过墙的人都知道有多不易（叹。且不说Tor基本上全面被封杀（不过双重代理能达到很好的效果，就是速度不行），Goagent的明文传输支持不了HTTPS（IP现在也不好找了），Shadowsocks免费服务器慢的一b，能凑合用用的也就是VPNgate了（为什么没有Mac客户端啊摔！）。<br>所以说，IPv6刻不容缓。毕竟方教授都看不懂协议不是（笑。<br>不知不觉又说了这么多废话。嗯下面开始正文。</p>
-        
-          <p class="article-more-link">
-            <a href="/2014/08/26/使用IPV6隧道科学上网/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/" data-id="cijofizmp000cby20oghsif5c" class="article-share-link">Share</a>
-      
-        <a href="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/科学上网/">科学上网</a></li></ul>
 
     </footer>
   </div>
@@ -795,7 +793,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -804,7 +802,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -816,6 +814,14 @@
       <ul>
         
           <li>
+            <a href="/2016/01/23/Continuation-Monad/">Continuation Monad</a>
+          </li>
+        
+          <li>
+            <a href="/2016/01/22/Type-family快速教程/">Type family快速教程</a>
+          </li>
+        
+          <li>
             <a href="/2016/01/21/Monad-Transformer/">请问您今天要来点Monad Transformer吗？</a>
           </li>
         
@@ -825,14 +831,6 @@
         
           <li>
             <a href="/2015/12/31/2015什么的，就这么过完了呢/">2015什么的，就这么过完了呢</a>
-          </li>
-        
-          <li>
-            <a href="/2015/11/21/浅谈编程语言/">编程语言</a>
-          </li>
-        
-          <li>
-            <a href="/2015/11/01/Implementing-a-JIT-compiled-Language/">使用Haskell和LLVM实现JIT编译的语言 0x00</a>
           </li>
         
       </ul>
