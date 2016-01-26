@@ -79,8 +79,8 @@
   
     <article id="post-Continuation-Monad" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/01/23/Continuation-Monad/" class="article-date">
-  <time datetime="2016-01-23T15:45:10.000Z" itemprop="datePublished">1月 23 2016</time>
+    <a href="/2016/01/24/Continuation-Monad/" class="article-date">
+  <time datetime="2016-01-24T15:45:10.000Z" itemprop="datePublished">1月 24 2016</time>
 </a>
     
   </div>
@@ -91,7 +91,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/23/Continuation-Monad/">Continuation Monad</a>
+      <a class="article-title" href="/2016/01/24/Continuation-Monad/">Continuation Monad</a>
     </h1>
   
 
@@ -99,15 +99,32 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>啊啊啊啊Github连击又断掉了！好的我们今天来谈Continuation Monad（哭丧脸。</p>
-<p>（施工中…）</p>
+        <p>啊啊啊啊Github连击又断掉了！好的那么我们今天来谈Continuation Monad（哭丧脸。</p>
+<p>Continuation Monad 长什么样子？大概像这样：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">Cont</span> r a = <span class="type">Cont</span> <span class="container">&#123; <span class="title">runCont</span> :: (<span class="title">a</span> -&gt; <span class="title">r</span>) -&gt; <span class="title">r</span> &#125;</span></span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="container">(<span class="type">Cont</span> <span class="title">r</span>)</span> <span class="keyword">where</span></span></span><br><span class="line">    return a = <span class="type">Cont</span> ($ a)</span><br><span class="line">    m &gt;&gt;= k = <span class="type">Cont</span> $ \c -&gt; runCont m $ \a -&gt; runCont (k a) c</span><br></pre></td></tr></table></figure>
+<p>那么Continuation究竟是一个什么概念？一般来说，Continuation表示的是“剩下的计算”的概念。熟悉命令式语言的读者可能对此没有什么概念，不过在命令式的世界里这件事可以粗略的表示为“分号后面的部分”。举个例子来说，假设我们这样一个表达式<code>foo (bar x y) z</code>，观察括号里面的部分，<code>(bar x y)</code>求值之后，需要应用到<code>foo _ z</code>。写成合法的表达式就是<code>\a -&gt; foo a z</code>，这也就是“剩下的计算”的语义。这样，我们就可以通过把<code>bar x y</code>应用到<code>\a -&gt; foo a z</code>来重新构建原来的形式。</p>
+<p>不过这样看起来实在不太雅观，我们能不能把它变的好看一点呢？不如试试把外面的放到里面，把里面的放到外面？这样我们就有了<code>\k -&gt; k (bar a b)</code>。这里<code>k</code>表示剩余的计算。</p>
+<p>这样表示起来我们就获得了很好的灵活性。看看原来的表达式<code>foo (bar a b) z</code>，我们不仅仅把<code>bar a b</code>从上下文中提取了出来，而且还能在这个subexpression中操作外面的上下文！等等这个是不是听起来很耳熟？仿佛已经闻到了一股清新的Monad的气味！</p>
+<p>不妨把这个想象成一种<strong>挂起的计算</strong>，并且我们能够显式地控制接下来将要发生什么。那么，我们要怎么推广到一般情况呢？观察到内部的subexpression并没有变化，不妨把它作为参数，得到<code>\x k -&gt; k x</code>。呃…这不就是单纯的<code>flip ($)</code>吗！看起来，Continuation本质上并没有比函数应用多出什么东西。</p>
+<p>那么作为一个Haskell程序员，我们这个时候肯定会思考这个东西，本质上是在一些上下文上面构建计算，这是个Monad吧？嗯没错，它的确是Monad。为了使它成为Monad，我们从两个基本的概念开始构建：</p>
+<ul>
+<li>对于Monad <code>m</code>，类型<code>m a</code>代表在这个Monad上下文当中的<code>a</code>类型</li>
+<li>我们挂起的计算本质上是颠倒顺序的函数应用</li>
+</ul>
+<p>那么这个Monad的上下文是什么？对于<code>x :: a</code>来说，这仅仅意味着我们对它应用<code>flip ($)</code>。<code>$</code>的类型签名为<code>(a -&gt; b) -&gt; a -&gt; b</code>，<code>flip ($)</code>的类型则是简单的<code>a -&gt; (a -&gt; b) -&gt; b</code>。噢，看起来已经有点像<code>Cont</code>的形式了！正如一个continuation代表着“未来的”某种计算，类型<code>a</code>自然就代表着某种意义上的“过去”。把<code>(a -&gt; b) -&gt; b</code>替换成<code>Cont b a</code>，我们就得到了<code>return</code>的类型<code>a -&gt; Cont b a</code>！</p>
+<p>所以一个<code>Cont r a</code>究竟意味着什么？不过是一个等待着接受一个函数<code>a -&gt; r</code>，并把它应用到<code>a</code>类型的函数罢了。实际上，如果给一个<code>id</code>函数进去，<code>Cont r a</code>和<code>a</code>完全是等价的！在这种语义下，<code>&gt;&gt;=</code>该怎么实现呢？</p>
+<p>回想一下Continuation的语义，我们所做的只不过是定义了一个函数，这里就叫做<code>|&gt;</code>吧，这个函数所做的唯一的事情就是将它的第一个参数应用到第二个参数上。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(|&gt;) :: a -&gt; (a -&gt; r) -&gt; r</span><br><span class="line"><span class="title">x</span> |&gt; f = f x</span><br></pre></td></tr></table></figure>
+<p>我们再来观察一下<code>&gt;&gt;=</code>的类型：<code>(&gt;&gt;=) :: Cont r a -&gt; (a -&gt; Cont r b) -&gt; Cont r b</code>，展开类型之后即<code>(&gt;&gt;=) :: (a -&gt; r) -&gt; r -&gt; (a -&gt; (b -&gt; r) -&gt; r) -&gt; (b -&gt; r) -&gt; r</code>。注意到返回类型应该是<code>(b -&gt; r) -&gt; r</code>，我们应该能够很自然的写出</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x |&gt;) &gt;&gt;= (|&gt;) = \f -&gt; x |&gt; (\b -&gt; b |&gt; f)</span><br></pre></td></tr></table></figure>
+<p>现在一切都很显然了，我们所做的不过是一连串的函数应用而已。把<code>|&gt;</code>翻译为<code>runCont c f</code>，我们就得到了前面看到的<code>m &gt;&gt;= k = \f -&gt; runCont m (\b -&gt; runCont (k b) f)</code>。不怎么好理解是不是？人肉展开一下可以知道，我们实际上就是构造了这样一大串无用的表达式<code>\f -&gt; x |&gt; (\a -&gt; a |&gt; (\b -&gt; b |&gt; ........ (\z -&gt; z |&gt; f))))</code>。对，没错，你已经得到了Continuation Monad。是不是有一种上当的感觉？绕了这么大一个圈子最后只是把一个好好的<code>f x</code>变成了一大串无用的lambda表达式？别着急，就连最“无用”的<code>id</code>都能起到很大的作用，在下一篇文章里我们就介绍Continuation Monad的应用：<a href="">Coroutine</a>。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/23/Continuation-Monad/" data-id="cijrar316000wkv20zsh69kpy" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cijvm00sd000wb420v8iocy2g" class="article-share-link">Share</a>
       
-        <a href="http://superhex.github.io/2016/01/23/Continuation-Monad/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://superhex.github.io/2016/01/24/Continuation-Monad/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
@@ -156,7 +173,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cijrar30q000hkv209md3nlf9" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cijvm00rw000hb420ecu2ajqa" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/22/Type-family快速教程/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -230,7 +247,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cijrar310000skv205kudcfqw" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cijvm00s7000sb420yf14m9ts" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/21/Monad-Transformer/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -331,7 +348,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cijrar314000ukv20lpnrezi5" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cijvm00sb000ub4206867my1c" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -400,7 +417,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cijrar30w000nkv20x9fjjt7a" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cijvm00s3000nb4207jd9c47d" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/10/06/Monad习作二则/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -446,7 +463,7 @@
       <ul>
         
           <li>
-            <a href="/2016/01/23/Continuation-Monad/">Continuation Monad</a>
+            <a href="/2016/01/24/Continuation-Monad/">Continuation Monad</a>
           </li>
         
           <li>
