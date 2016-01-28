@@ -77,6 +77,77 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-coroutine" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/27/coroutine/" class="article-date">
+  <time datetime="2016-01-27T14:58:45.000Z" itemprop="datePublished">1月 27 2016</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/27/coroutine/">使用Continuation Monad实现Coroutine</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>其实知道Continuation Monad还可以这么用还是因为CodeWars上的<a href="http://www.codewars.com/kata/547a77a6b84a1fb8bf000211" target="_blank" rel="external">一道题</a>。足足肝了三天还是没完全想明白orz。姑且先记录一下现在的想法吧。</p>
+<p>先来回顾一下Continuation Monad的定义：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">Cont</span> r a = <span class="type">Cont</span> <span class="container">&#123; <span class="title">runCont</span> :: (<span class="title">a</span> -&gt; <span class="title">r</span>) -&gt; <span class="title">r</span> &#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- useful alias</span></span><br><span class="line">(|&gt;) :: a -&gt; (a -&gt; r) -&gt; r</span><br><span class="line"><span class="title">x</span> |&gt; f = f x</span><br></pre></td></tr></table></figure>
+<p>从上一篇文章中我们知道<code>f &gt;&gt;= g</code>不过就是<code>f x</code>展开为一连串的apply形式：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Cont</span> r x == ($ x)</span><br><span class="line">         == \f -&gt; x |&gt; f</span><br><span class="line">         == \f -&gt; x |&gt; (\g -&gt; g |&gt; f)</span><br><span class="line">         == \f -&gt; x |&gt; (\g -&gt; g |&gt; ... (\z -&gt; z |&gt; f))</span><br></pre></td></tr></table></figure>
+<p>这种形式到底有什么用呢？我们马上就能看到。</p>
+<p>现在的问题是Coroutine该如何实现？我们可以把它抽象为一个指挥棒传递的过程。一个线程<code>x</code>开心的运行着一些计算，直到它需要输入或输出一些数据。这个时候它把指挥棒交给另一个线程<code>y</code>,直到<code>y</code>产生一些输入输出，再交还指挥棒。等等，这个描述是不是和上面的展开式有点像？如果把每一个lambda表达式都看成一个计算的话，这正是我们需要的。于是根据语义我们可以写下</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="pragma">&#123;-# LANGUAGE DeriveFunctor #-&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- u : input type  d : output type</span></span><br><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">Coroutine</span> r u d a = <span class="type">Coroutine</span> <span class="container">&#123; <span class="title">runCoroutine</span> :: (<span class="title">a</span> -&gt; <span class="title">r</span>) -&gt; <span class="title">r</span> &#125;</span> <span class="keyword">deriving</span> <span class="type">Functor</span></span></span><br><span class="line"></span><br><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="type">Command</span> r u d a = <span class="type">Done</span> a</span></span><br><span class="line">                     | <span class="type">Out</span> d (<span class="type">Coroutine</span> r u d a)</span><br><span class="line">                     | <span class="type">In</span> (\u -&gt; <span class="type">Coroutine</span> r u d a)</span><br><span class="line">                     <span class="keyword">deriving</span> <span class="type">Functor</span></span><br></pre></td></tr></table></figure>
+<p>这里详细的解释一下。<code>Coroutine</code>实际上和<code>Cotinuation</code>是一个东西，只不过多了额外的两个类型参数。<code>u</code>为输入参数的类型，<code>d</code>为输出参数的类型。<code>Command r u d a</code>里则定义了三种基本类型，分别为<code>Done a</code>表示计算完成，没有输入输出；<code>Out d (Coroutine r u d a)</code>表示输出类型为<code>d</code>的数据，同时执行参数中的计算；<code>In (\u -&gt; Coroutine r u d a)</code>表示需要输入数据，并在等待输入时执行参数中的计算。很优雅的抽象，对吧？下一步就是将<code>Coroutine</code>声明为Monad：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- useful alias</span></span><br><span class="line"><span class="title">apply</span> = runCoroutine</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="container">(<span class="type">Coroutine</span> <span class="title">r</span> <span class="title">u</span> <span class="title">d</span>)</span> <span class="keyword">where</span></span></span><br><span class="line">  pure = return</span><br><span class="line">  (&lt;*&gt;) = ap</span><br><span class="line"><span class="class">  </span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="container">(<span class="type">Coroutine</span> <span class="title">r</span> <span class="title">u</span> <span class="title">d</span>)</span> <span class="keyword">where</span></span></span><br><span class="line">  return a = <span class="type">Coroutine</span> ($ a)</span><br><span class="line">  f &gt;&gt;= g  = <span class="type">Coroutine</span> $ \k -&gt; apply f $</span><br><span class="line">                           \a -&gt; <span class="keyword">case</span> a <span class="keyword">of</span></span><br><span class="line">                             <span class="type">Done</span> x -&gt; (g x) `apply` k</span><br><span class="line">                             <span class="type">Out</span> d c -&gt; k $ <span class="type">Out</span> d (c &gt;&gt;= g)</span><br><span class="line">                             <span class="type">In</span> fn -&gt; k $ <span class="type">In</span> (\u -&gt; fn u &gt;&gt;= g)</span><br></pre></td></tr></table></figure>
+<p>这里在做的实际上和原来并没有太大区别，只是在每一个lambda表达式中多了一个判断。</p>
+<ul>
+<li>如果计算完成了（<code>Done a</code>），那么直接进行下一个计算。</li>
+<li>如果计算需要输出类型为<code>d</code>的数据（`Out d (Coroutine r u d a))，那么挂起这个计算，直到另一个计算返回结果，并将函数应用到这个结果上。</li>
+<li>如果计算需要输入一个<code>u</code>类型，那么同样挂起计算，等到有输入的时候将输入传给另一个计算。</li>
+</ul>
+<p>这样看起来可能很抽象，并且我们现在还没办法构建真正的”continuation” 。不妨定义一些helper function：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">output</span> :: a -&gt; <span class="type">Coroutine</span> r u a ()</span><br><span class="line"><span class="title">input</span> :: <span class="type">Coroutine</span> r v d v</span><br><span class="line"><span class="title">produce</span> :: [a] -&gt; <span class="type">Coroutine</span> r u a ()</span><br><span class="line"><span class="title">consume</span> :: <span class="type">Coroutine</span> [t] u t a -&gt; [t]</span><br><span class="line"><span class="title">filterC</span> :: (v -&gt; <span class="type">Bool</span>) -&gt; <span class="type">Coroutine</span> r v v ()</span><br><span class="line"><span class="title">limit</span> :: <span class="type">Int</span> -&gt; <span class="type">Coroutine</span> r v v ()</span><br><span class="line"><span class="title">suppress</span> :: <span class="type">Int</span> -&gt; <span class="type">Coroutine</span> r v v ()</span><br><span class="line"></span><br><span class="line"><span class="comment">-- alias</span></span><br><span class="line"><span class="title">mkCoroutine</span> :: <span class="type">Command</span> r u d a -&gt; <span class="type">Coroutine</span> r u d a</span><br><span class="line"><span class="title">mkCoroutine</span> command = <span class="type">Coroutine</span> ($ command)</span><br></pre></td></tr></table></figure>
+<p>先来看<code>output</code>，我们希望它立刻输出一些东西，于是可以写出：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">output</span> :: a -&gt; <span class="type">Coroutine</span> r u a ()</span><br><span class="line"><span class="title">output</span> v = mkCoroutine $ <span class="type">Out</span> v (return ())</span><br></pre></td></tr></table></figure>
+<p>然后是<code>input</code>，它在获取一个输入后返回它：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">input</span> :: <span class="type">Coroutine</span> r v d v</span><br><span class="line"><span class="title">input</span> u = mkCoroutine $ <span class="type">In</span> (\u -&gt; return u)</span><br></pre></td></tr></table></figure>
+<p><code>produce</code>连续的产生输出，而<code>consume</code>将所有的<code>Out</code>提取出来：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">produce</span> :: [a] -&gt; <span class="type">Coroutine</span> r u a ()</span><br><span class="line"><span class="title">produce</span> xs = mapM_ output xs</span><br><span class="line"></span><br><span class="line"><span class="title">consume</span> :: <span class="type">Coroutine</span> [t] u t a -&gt; [t]</span><br><span class="line"><span class="title">consume</span> c = runCoroutine c go</span><br><span class="line">    <span class="keyword">where</span> go (<span class="type">Done</span> _)  = []</span><br><span class="line">          go (<span class="type">Out</span> d n) = d : consume n</span><br><span class="line">          go (<span class="type">In</span> _)    = []</span><br></pre></td></tr></table></figure>
+<p><code>filterC</code>挑选出每一个符合条件的输入并输出：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">filterC</span> :: (v -&gt; <span class="type">Bool</span>) -&gt; <span class="type">Coroutine</span> r v v ()</span><br><span class="line"><span class="title">filterC</span> p = <span class="keyword">do</span></span><br><span class="line">    i &lt;- input</span><br><span class="line">    when (p i) (output i)</span><br><span class="line">    filterC p</span><br></pre></td></tr></table></figure>
+<p>最后，<code>limit</code>类似于<code>take</code>，<code>suppress</code>类似于<code>drop</code>：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">limit</span> :: <span class="type">Int</span> -&gt; <span class="type">Coroutine</span> r v v ()</span><br><span class="line"><span class="title">limit</span> n = replicateM_ n (input &gt;&gt;= output)</span><br><span class="line"></span><br><span class="line"><span class="title">suppress</span> :: <span class="type">Int</span> -&gt; <span class="type">Coroutine</span> r v v ()</span><br><span class="line"><span class="title">suppress</span> n</span><br><span class="line">    | n &gt; <span class="number">0</span> = input &gt;&gt; suppress (n-<span class="number">1</span>)</span><br><span class="line">    | otherwise = forever $ input &gt;&gt;= output</span><br></pre></td></tr></table></figure>
+<p>现在，我们就可以用这些函数来构建一些有趣的东西了</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">p1</span> = filterC even &gt;&gt;&gt; limit <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="title">consume</span> (produce [<span class="number">0.</span>.] &gt;&gt;&gt; p1) === [<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>]</span><br></pre></td></tr></table></figure>
+<p>更多的玩法就留给读者去发掘吧w</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cijyc4jps000e7220nruckjn8" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2016/01/27/coroutine/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Continuation-Monad" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/01/24/Continuation-Monad/" class="article-date">
@@ -122,7 +193,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cijvm00sd000wb420v8iocy2g" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cijyc4jqe000y72205yvlc881" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/24/Continuation-Monad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -173,7 +244,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cijvm00rw000hb420ecu2ajqa" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cijyc4jpx000k7220m85emeox" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/22/Type-family快速教程/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -247,7 +318,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cijvm00s7000sb420yf14m9ts" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cijyc4jq9000u72207miuak2b" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/21/Monad-Transformer/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -292,7 +363,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cijvm00s0000kb420ar9mojgx" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cijyc4jq1000m7220nninezex" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -369,7 +440,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/" data-id="cijvm00qq0000b420ewywgyah" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/" data-id="cijyc4jos00007220hg6cbqcj" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -468,7 +539,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cijvm00sb000ub4206867my1c" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cijyc4jqb000w7220mu5bpmct" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -537,7 +608,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cijvm00s3000nb4207jd9c47d" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cijyc4jq4000p7220ragp2wj3" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/10/06/Monad习作二则/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -721,72 +792,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cijvm00ru000eb420kjuqnnvo" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cijyc4jpu000h7220bjgfumo6" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/09/12/Y-Combinator/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/函数式编程/">函数式编程</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-记Arduino中的一些坑" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/09/04/记Arduino中的一些坑/" class="article-date">
-  <time datetime="2014-09-04T03:51:22.000Z" itemprop="datePublished">9月 4 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/04/记Arduino中的一些坑/">记Arduino中的一些坑</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>长期不定时更新。</p>
-<h2 id="1-Multiple_Defination问题">1.Multiple Defination问题</h2><p>问题表现: 编译失败，提示函数多重定义却又不给出首次定义地点。</p>
-<p>错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Error</span> <span class="type">Compiling</span></span><br><span class="line"><span class="type">Control</span>.cpp:<span class="number">53</span>: multiple definition <span class="keyword">of</span> `<span class="type">TrueControl</span>(double, double, double)'</span><br><span class="line"><span class="type">Control</span>.cpp.o:<span class="type">Control</span>.cpp:<span class="number">53</span>: first defined here</span><br></pre></td></tr></table></figure></p>
-<p>错误原因: 猜测编译器会忽略后缀为<code>.cpp</code>文件中的<code>#ifndef</code>？总之还是老老实实写一个<code>.h</code>和一个<code>.cpp</code>准没错。</p>
-<p>解决办法: </p>
-<ul>
-<li>将出错文件名后缀改为<code>.h</code>即可。(&lt;-不规范)</li>
-<li>将函数定义单独放到<code>.h</code>文件中并使用<code>#ifndef ... #define... #endif</code>(&lt;-规范，未测试)</li>
-</ul>
-<h2 id="2-Uploading问题">2.Uploading问题</h2><p>问题表现: 成功编译，但上传失败。</p>
-<p>错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Problem</span> <span class="type">Uploading</span> to board</span><br><span class="line"><span class="title">avrdude</span>: stk500_recv(): programmer is not responding</span><br><span class="line"></span><br><span class="line"><span class="comment">-- or</span></span><br><span class="line"></span><br><span class="line"><span class="type">Clock</span> not synchronize</span><br></pre></td></tr></table></figure></p>
-<p>错误原因: 常见于Arduino mini等没有直接USB接口的设备。原因为设备没有引出时钟线导致时钟不同步。</p>
-<p>解决办法: 上传的一瞬间按下<code>Reset</code>按键即可，也可以按住在上传的一瞬间松开。</p>
-<h2 id="3-Double_Include问题">3.Double Include问题</h2><p>问题表现: 不定。</p>
-<p>常见错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">'<span class="type">XXX'</span> was not declared <span class="keyword">in</span> this scope</span><br><span class="line"></span><br><span class="line"><span class="comment">-- or</span></span><br><span class="line"></span><br><span class="line">'<span class="type">XXX'</span> does not name a <span class="typedef"><span class="keyword">type</span></span></span><br></pre></td></tr></table></figure></p>
-<p>错误原因: 你以为Include了，实际上并没有。</p>
-<p>解决办法: 将所有需要的头文件在<code>.ino</code>文件头再次<code>#include</code>一次。当然不要忘记在头文件里加入<code>#ifndef</code>。</p>
-<p>解释&amp;吐槽: 这个问题简直坑死爹了好吗！翻了好久才在Arduino论坛上找到。老外的解释是:<br><cite><br>Arduino的编译器会将当前文件夹下用得到的文件拷贝到一个临时目录中进行编译（这也是为什么Arduino会要求将文件移到文件夹中），而编译器只会将.ino文件中包含的文件视作需要编译的文件（绕口令）。所以会无视包含中的包含。<br></cite><br>也就是说，如果你有一个这样的包含关系:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">| <span class="type">Arduino</span>.ino</span><br><span class="line">    | library.h</span><br><span class="line">        | sublibrary.h</span><br><span class="line">        | math.h</span><br><span class="line">    |lib.h</span><br></pre></td></tr></table></figure></p>
-<p>而只在<code>Arduino.h</code>中包含了<code>library.h</code>,<code>lib.h</code>那么在编译的时候编译器将不会拷贝<code>sublibrary.h</code>和<code>math.h</code>从而导致编译失败。</p>
-<p>待续。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/" data-id="cijvm00rk0002b420a9uzjm4c" class="article-share-link">Share</a>
-      
-        <a href="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Arduino/">Arduino</a></li></ul>
 
     </footer>
   </div>
@@ -810,7 +821,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -819,7 +830,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -829,6 +840,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/01/27/coroutine/">使用Continuation Monad实现Coroutine</a>
+          </li>
         
           <li>
             <a href="/2016/01/24/Continuation-Monad/">Continuation Monad</a>
@@ -844,10 +859,6 @@
         
           <li>
             <a href="/2016/01/05/Template-template-parameters/">Template-template parameters</a>
-          </li>
-        
-          <li>
-            <a href="/2015/12/31/2015什么的，就这么过完了呢/">2015什么的，就这么过完了呢</a>
           </li>
         
       </ul>

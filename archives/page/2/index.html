@@ -77,6 +77,66 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-记Arduino中的一些坑" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/09/04/记Arduino中的一些坑/" class="article-date">
+  <time datetime="2014-09-04T03:51:22.000Z" itemprop="datePublished">9月 4 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/04/记Arduino中的一些坑/">记Arduino中的一些坑</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>长期不定时更新。</p>
+<h2 id="1-Multiple_Defination问题">1.Multiple Defination问题</h2><p>问题表现: 编译失败，提示函数多重定义却又不给出首次定义地点。</p>
+<p>错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Error</span> <span class="type">Compiling</span></span><br><span class="line"><span class="type">Control</span>.cpp:<span class="number">53</span>: multiple definition <span class="keyword">of</span> `<span class="type">TrueControl</span>(double, double, double)'</span><br><span class="line"><span class="type">Control</span>.cpp.o:<span class="type">Control</span>.cpp:<span class="number">53</span>: first defined here</span><br></pre></td></tr></table></figure></p>
+<p>错误原因: 猜测编译器会忽略后缀为<code>.cpp</code>文件中的<code>#ifndef</code>？总之还是老老实实写一个<code>.h</code>和一个<code>.cpp</code>准没错。</p>
+<p>解决办法: </p>
+<ul>
+<li>将出错文件名后缀改为<code>.h</code>即可。(&lt;-不规范)</li>
+<li>将函数定义单独放到<code>.h</code>文件中并使用<code>#ifndef ... #define... #endif</code>(&lt;-规范，未测试)</li>
+</ul>
+<h2 id="2-Uploading问题">2.Uploading问题</h2><p>问题表现: 成功编译，但上传失败。</p>
+<p>错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Problem</span> <span class="type">Uploading</span> to board</span><br><span class="line"><span class="title">avrdude</span>: stk500_recv(): programmer is not responding</span><br><span class="line"></span><br><span class="line"><span class="comment">-- or</span></span><br><span class="line"></span><br><span class="line"><span class="type">Clock</span> not synchronize</span><br></pre></td></tr></table></figure></p>
+<p>错误原因: 常见于Arduino mini等没有直接USB接口的设备。原因为设备没有引出时钟线导致时钟不同步。</p>
+<p>解决办法: 上传的一瞬间按下<code>Reset</code>按键即可，也可以按住在上传的一瞬间松开。</p>
+<h2 id="3-Double_Include问题">3.Double Include问题</h2><p>问题表现: 不定。</p>
+<p>常见错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">'<span class="type">XXX'</span> was not declared <span class="keyword">in</span> this scope</span><br><span class="line"></span><br><span class="line"><span class="comment">-- or</span></span><br><span class="line"></span><br><span class="line">'<span class="type">XXX'</span> does not name a <span class="typedef"><span class="keyword">type</span></span></span><br></pre></td></tr></table></figure></p>
+<p>错误原因: 你以为Include了，实际上并没有。</p>
+<p>解决办法: 将所有需要的头文件在<code>.ino</code>文件头再次<code>#include</code>一次。当然不要忘记在头文件里加入<code>#ifndef</code>。</p>
+<p>解释&amp;吐槽: 这个问题简直坑死爹了好吗！翻了好久才在Arduino论坛上找到。老外的解释是:<br><cite><br>Arduino的编译器会将当前文件夹下用得到的文件拷贝到一个临时目录中进行编译（这也是为什么Arduino会要求将文件移到文件夹中），而编译器只会将.ino文件中包含的文件视作需要编译的文件（绕口令）。所以会无视包含中的包含。<br></cite><br>也就是说，如果你有一个这样的包含关系:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">| <span class="type">Arduino</span>.ino</span><br><span class="line">    | library.h</span><br><span class="line">        | sublibrary.h</span><br><span class="line">        | math.h</span><br><span class="line">    |lib.h</span><br></pre></td></tr></table></figure></p>
+<p>而只在<code>Arduino.h</code>中包含了<code>library.h</code>,<code>lib.h</code>那么在编译的时候编译器将不会拷贝<code>sublibrary.h</code>和<code>math.h</code>从而导致编译失败。</p>
+<p>待续。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/" data-id="cijyc4jph00027220iynj5dgd" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Arduino/">Arduino</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-使用IPV6隧道科学上网" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/08/26/使用IPV6隧道科学上网/" class="article-date">
@@ -114,7 +174,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/" data-id="cijvm00rs000bb420o7o5set0" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/" data-id="cijyc4jpp000b7220md7m0wyc" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -203,7 +263,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/" data-id="cijvm00ro0005b420x5ke1rhq" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/" data-id="cijyc4jpm00057220hv7vge7k" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -232,7 +292,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -241,7 +301,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -251,6 +311,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/01/27/coroutine/">使用Continuation Monad实现Coroutine</a>
+          </li>
         
           <li>
             <a href="/2016/01/24/Continuation-Monad/">Continuation Monad</a>
@@ -266,10 +330,6 @@
         
           <li>
             <a href="/2016/01/05/Template-template-parameters/">Template-template parameters</a>
-          </li>
-        
-          <li>
-            <a href="/2015/12/31/2015什么的，就这么过完了呢/">2015什么的，就这么过完了呢</a>
           </li>
         
       </ul>
