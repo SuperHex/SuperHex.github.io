@@ -3,24 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>使用IPv6隧道科学上网 | 妄想神社</title>
+  <title>Tag: Emacs | 妄想神社</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="由于一些你我都懂的原因，在这个神奇的国度想要好好上个网简直太难了。虽说现在也有不少成熟的工具来Cross the wall（Windows下强推VPNgate这个工具，Mac下有Shadowsocks不过公有服务器实在太慢），但是多多少少都有一些缺陷。那么什么样的梯子才是好梯子呢？大概要满足这么几个方面
-
-稳定性。代理的稳定性不用多说，不过鉴于现在GFW的技术也在不断升级，有个稳定免费的代理是越来">
-<meta property="og:type" content="article">
-<meta property="og:title" content="使用IPv6隧道科学上网">
-<meta property="og:url" content="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/index.html">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="妄想神社">
+<meta property="og:url" content="http://superhex.github.io/tags/Emacs/index.html">
 <meta property="og:site_name" content="妄想神社">
-<meta property="og:description" content="由于一些你我都懂的原因，在这个神奇的国度想要好好上个网简直太难了。虽说现在也有不少成熟的工具来Cross the wall（Windows下强推VPNgate这个工具，Mac下有Shadowsocks不过公有服务器实在太慢），但是多多少少都有一些缺陷。那么什么样的梯子才是好梯子呢？大概要满足这么几个方面
-
-稳定性。代理的稳定性不用多说，不过鉴于现在GFW的技术也在不断升级，有个稳定免费的代理是越来">
-<meta property="og:updated_time" content="2014-09-04T05:04:58.000Z">
+<meta property="og:description">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用IPv6隧道科学上网">
-<meta name="twitter:description" content="由于一些你我都懂的原因，在这个神奇的国度想要好好上个网简直太难了。虽说现在也有不少成熟的工具来Cross the wall（Windows下强推VPNgate这个工具，Mac下有Shadowsocks不过公有服务器实在太慢），但是多多少少都有一些缺陷。那么什么样的梯子才是好梯子呢？大概要满足这么几个方面
-
-稳定性。代理的稳定性不用多说，不过鉴于现在GFW的技术也在不断升级，有个稳定免费的代理是越来">
+<meta name="twitter:title" content="妄想神社">
+<meta name="twitter:description">
   
     <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
   
@@ -82,10 +75,12 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-使用IPV6隧道科学上网" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main">
+  
+    <article id="post-Emacs配置流水账" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/08/26/使用IPV6隧道科学上网/" class="article-date">
-  <time datetime="2014-08-26T10:05:59.000Z" itemprop="datePublished">8月 26 2014</time>
+    <a href="/2016/01/29/Emacs配置流水账/" class="article-date">
+  <time datetime="2016-01-29T14:47:02.000Z" itemprop="datePublished">1月 29 2016</time>
 </a>
     
   </div>
@@ -95,8 +90,8 @@
       <header class="article-header">
         
   
-    <h1 class="article-title" itemprop="name">
-      使用IPv6隧道科学上网
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/29/Emacs配置流水账/">Emacs配置流水账</a>
     </h1>
   
 
@@ -104,68 +99,30 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>由于一些你我都懂的原因，在这个神奇的国度想要好好上个网简直太难了。虽说现在也有不少成熟的工具来<code>Cross the wall</code>（Windows下强推VPNgate这个工具，Mac下有Shadowsocks不过公有服务器实在太慢），但是多多少少都有一些缺陷。那么什么样的梯子才是好梯子呢？大概要满足这么几个方面</p>
-<ol>
-<li>稳定性。代理的稳定性不用多说，不过鉴于现在GFW的技术也在不断升级，有个稳定免费的代理是越来越难了。</li>
-<li>速度。相信谁也不愿意忍受打开网页都要5s以上的速度。（Shadowsocks的公共服务器太慢也是促成本文的一大原因）</li>
-<li>安全性。这条现在其实与第一条等同了，HTTP不带S简直就是分分钟秒杀。（Goagent好像例外？）明文传输的数据也很容易被抓包啊。</li>
-</ol>
-<p>这三条看起来很好满足，实际上爬过墙的人都知道有多不易（叹。且不说Tor基本上全面被封杀（不过双重代理能达到很好的效果，就是速度不行），Goagent的明文传输支持不了HTTPS（IP现在也不好找了），Shadowsocks免费服务器慢的一b，能凑合用用的也就是VPNgate了（为什么没有Mac客户端啊摔！）。<br>所以说，IPv6刻不容缓。毕竟方教授都看不懂协议不是（笑。<br>不知不觉又说了这么多废话。嗯下面开始正文。</p>
-<a id="more"></a>
-<hr>
-<p>#什么是IPv6隧道</p>
-<p><strong> warning:方法已作废 </strong></p>
-<p>找到这个页面的人想必也不是小白了，IPv6什么的也就不多说了。简而言之，IPv6隧道就是一种将IPv6格式的数据包装为IPv4的服务。<strike>这里采用的是Hurricane Electric提供的IPv6隧道服务。</strike></p>
-<p>#注册IPv6地址</p>
-<strike><a href="https://tunnelbroker.net" target="_blank" rel="external">Hurricane Electric Free IPv6 Tunnel Broker</a><br><br>点进去之后就是Sign Up，填一堆个人信息嗯……我这里瞎编了一堆（。<strong>⚠注意邮箱不能编，提交后会发来用户名和密码</strong><br>据说还要保证自己的IPv4地址能够被服务器Ping到……我想这个不难吧。<br><br>然后要等24小时啊！坑爹呢这是！明天拿到IPv6地址再更新 </strike>
-
-<hr>
-<p>=========2014-08-27 Update=========<br>果断秒收flag……咱的ip果然不能被ping到…… 再次问候方教授。<br>尝试一下上海交通大学提供的隧道嗯。</p>
-<p><a href="http://ipv6.sjtu.edu.cn/news/041231.php" target="_blank" rel="external">传送门</a></p>
-<p>懒得更新了…待续。</p>
+        <p>一直看Haskell群里的人安利Emacs，于是想试试看到底怎么样。遇到的问题什么的大概都会堆到这里嗯。</p>
+<h2 id="安装Emacs">安装Emacs</h2><p>之前也是道听途说<code>Spacemacs</code>这个Emacs发行版做的非常好，于是就偷懒直接用未修改的spacemacs了（其实是不会改吧。</p>
+<p>先到GNU官网弄个Emacs原版，然后把spacemacs配置文件clone到<code>~/.emacs.d/</code>就行了。</p>
+<h2 id="安装Haskell-Mode">安装Haskell-Mode</h2><p>spacemacs默认似乎并不带许多语言的支持，所以第一件事当然是要先装上haskell-mode。按照<a href="https://github.com/haskell/haskell-mode" target="_blank" rel="external">文档</a>一步步来就没问题了。</p>
+<p>待更。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/" data-id="cijztndvd000brg20mntdrjch" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cijztndwc000yrg20eqt0jf4f" class="article-share-link">Share</a>
       
-        <a href="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://superhex.github.io/2016/01/29/Emacs配置流水账/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/科学上网/">科学上网</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Emacs/">Emacs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
 
     </footer>
   </div>
   
-    
-<nav id="article-nav">
-  
-    <a href="/2014/09/04/记Arduino中的一些坑/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          记Arduino中的一些坑
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2014/08/19/四轴飞行器完全指南0x01/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">四轴飞行器完全指南0x01 - Arduino、姿态解算和滤波</div>
-    </a>
-  
-</nav>
-
-  
 </article>
 
 
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
+  
+  
 </section>
         
           <aside id="sidebar">
@@ -247,13 +204,11 @@
 <script>
   var disqus_shortname = 'coderenaissance';
   
-  var disqus_url = 'http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/';
-  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//go.disqus.com/embed.js';
+    dsq.src = '//go.disqus.com/count.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>
