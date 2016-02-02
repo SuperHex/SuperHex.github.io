@@ -140,11 +140,14 @@
 <p>给haskell-mode添加一些key-bindings</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">;; (defun haskell/init-haskell-mode ()</span><br><span class="line">;; ...</span><br><span class="line">:config</span><br><span class="line">(custom-set-variables</span><br><span class="line">  '(haskell-process-suggest-remove-import-lines t)</span><br><span class="line">  '(haskell-process-auto-import-loaded-modules t)</span><br><span class="line">  '(haskell-process-log t)</span><br><span class="line">  ;; add cabal repl support.if use stack, replace 'cabal-repl with 'stack-ghci.</span><br><span class="line">  '(haskell-process-type 'cabal-repl))</span><br><span class="line">  </span><br><span class="line">(eval-after-load 'haskell-mode '(progn</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)</span><br><span class="line">  (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)))</span><br><span class="line">(eval-after-load 'haskell-cabal '(progn</span><br><span class="line">  (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)</span><br><span class="line">  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)</span><br><span class="line">  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)</span><br><span class="line">  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))</span><br></pre></td></tr></table></figure>
 <p>然后可能就是折腾一下ghc-mod和学习一下它们复杂的快捷键了orz。</p>
+<hr>
+<p>2016.02.02 update</p>
+<p>啊啊果然之前是ghc-mod没有配置好。每次都在这里po配置实在太麻烦了，于是把配置放在了github上（<a href="https://github.com/SuperHex/spacemacs-haskell-config）。" target="_blank" rel="external">https://github.com/SuperHex/spacemacs-haskell-config）。</a><br>之后就专心维护这份配置文件了！之后可能会研究一下传说中逆天的org mode，希望能解救我于堆积如山的bookmark之中吧（。今天好水啊（。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cik43vi7j000ycv20wvia2q8j" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cik5k3yq3000yt420t0ca4j6d" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/29/Emacs配置流水账/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -215,7 +218,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cik43vi6w000ecv20pfp67icl" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cik5k3yph000et42019qng00o" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/27/coroutine/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -274,7 +277,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cik43vi7n0012cv205zpo0b0u" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cik5k3yq50012t420pd4pn2vw" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/24/Continuation-Monad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -325,7 +328,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cik43vi71000kcv20hhgp4w6l" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cik5k3ypm000kt420r8ef9v4j" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/22/Type-family快速教程/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -399,7 +402,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cik43vi7d000ucv20j9t5clcm" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cik5k3ypy000ut420q2ew6ood" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/21/Monad-Transformer/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -444,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cik43vi75000mcv20h5zeeuid" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cik5k3ypp000mt4205edy9yn7" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
       
