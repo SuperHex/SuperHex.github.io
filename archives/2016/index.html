@@ -77,6 +77,57 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Kata-Lens-Maker" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/02/07/Kata-Lens-Maker/" class="article-date">
+  <time datetime="2016-02-07T14:48:51.000Z" itemprop="datePublished">2月 7 2016</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/02/07/Kata-Lens-Maker/">[Draft] Kata:Lens-Maker</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近在研究Profunctor这个东西。其定义虽然很简单但却有点意义不明..<br>听人安利这个<a href="http://www.codewars.com/kata/54258ffb430ca2e4b5000239/train/haskell" target="_blank" rel="external">Kata</a>做完就会有个大概的认识于是试一试。</p>
+<p>这个Kata基本上就是从头造个Lens库出来.. 难度自然也是鬼畜级别的。所以可能会坑很多天..</p>
+<hr>
+<p>首先是一些基本类型定义。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="pragma">&#123;-# LANGUAGE DeriveFunctor #-&#125;</span></span><br><span class="line"><span class="pragma">&#123;-# LANGUAGE RankNTypes    #-&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="module"><span class="keyword">module</span> MicroLens <span class="keyword">where</span></span></span><br><span class="line"></span><br><span class="line"><span class="import"><span class="keyword">import</span>           Control.Applicative</span></span><br><span class="line"><span class="import"><span class="keyword">import</span>           Data.Monoid</span></span><br><span class="line"><span class="import"><span class="keyword">import</span> <span class="keyword">qualified</span> Data.Traversable    <span class="keyword">as</span> T</span></span><br><span class="line"><span class="import"><span class="keyword">import</span>           Prelude             <span class="keyword">hiding</span> <span class="container">(<span class="title">sum</span>)</span></span></span><br><span class="line"><span class="import"><span class="keyword">import</span>           Unsafe.Coerce</span></span><br><span class="line"></span><br><span class="line"><span class="comment">---------------------------------------------------------</span></span><br><span class="line"><span class="comment">-- Some basic libraries</span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">class</span> <span class="type">Profunctor</span> p <span class="keyword">where</span></span></span><br><span class="line">  dimap :: (a' -&gt; a) -&gt; (b -&gt; b') -&gt; (p a b -&gt; p a' b')</span><br><span class="line">  dimap f g = lmap f . rmap g</span><br><span class="line">  lmap ::  (a' -&gt; a) -&gt; (p a b -&gt; p a' b)</span><br><span class="line">  lmap f = dimap f id</span><br><span class="line">  rmap ::  (b -&gt; b') -&gt; (p a b -&gt; p a b')</span><br><span class="line">  rmap f = dimap id f</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">class</span> <span class="type">Profunctor</span> p =&gt; <span class="type">Choice</span> p <span class="keyword">where</span></span></span><br><span class="line">  left'  :: p a b -&gt; p (<span class="type">Either</span> a c) (<span class="type">Either</span> b c)</span><br><span class="line">  right' :: p a b -&gt; p (<span class="type">Either</span> c a) (<span class="type">Either</span> c b)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Profunctor</span> <span class="container">(-&gt;)</span> <span class="keyword">where</span></span></span><br><span class="line">  dimap f g h = g . h . f</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Choice</span> <span class="container">(-&gt;)</span> <span class="keyword">where</span></span></span><br><span class="line">  left'  f = either (<span class="type">Left</span> . f) <span class="type">Right</span></span><br><span class="line">  right' f = either <span class="type">Left</span> (<span class="type">Right</span> . f)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">class</span> <span class="type">Contravariant</span> f <span class="keyword">where</span></span></span><br><span class="line">  contramap :: (a' -&gt; a) -&gt; (f a -&gt; f a')</span><br><span class="line"></span><br><span class="line"><span class="comment">-- Control.Applicative.Const replicated here for your</span></span><br><span class="line"><span class="comment">-- convenience</span></span><br><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">K</span> b a = <span class="type">K</span> <span class="container">&#123; <span class="title">getK</span> :: <span class="title">b</span> &#125;</span> <span class="keyword">deriving</span> <span class="type">Functor</span></span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monoid</span> b =&gt; <span class="type">Applicative</span> <span class="container">(<span class="type">K</span> <span class="title">b</span>)</span> <span class="keyword">where</span></span></span><br><span class="line">  pure _ = <span class="type">K</span> mempty</span><br><span class="line">  <span class="type">K</span> e &lt;*&gt; <span class="type">K</span> f = <span class="type">K</span> (e &lt;&gt; f)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Contravariant</span> <span class="container">(<span class="type">K</span> <span class="title">b</span>)</span> <span class="keyword">where</span></span></span><br><span class="line">  contramap f (<span class="type">K</span> b) = <span class="type">K</span> b</span><br><span class="line"></span><br><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">Id</span> a = <span class="type">Id</span> <span class="container">&#123; <span class="title">getId</span> :: <span class="title">a</span> &#125;</span> <span class="keyword">deriving</span> <span class="type">Functor</span></span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="type">Id</span> <span class="keyword">where</span></span></span><br><span class="line">  pure = <span class="type">Id</span></span><br><span class="line">  <span class="type">Id</span> f &lt;*&gt; <span class="type">Id</span> x = <span class="type">Id</span> (f x)</span><br><span class="line"></span><br><span class="line"><span class="comment">---------------------------------------------------------</span></span><br><span class="line"><span class="comment">-- The lens types you'll implement</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- | Optic is the general pattern for all other lens types.</span></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Optic</span> p f s t a b =</span></span><br><span class="line">  p a (f b) -&gt; p s (f t)</span><br><span class="line"></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Iso</span> s t a b =</span></span><br><span class="line">  <span class="keyword">forall</span> p f . (<span class="type">Profunctor</span> p, <span class="type">Functor</span> f) =&gt;</span><br><span class="line">  <span class="type">Optic</span> p f s t a b</span><br><span class="line"></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Lens</span> s t a b =</span></span><br><span class="line">  <span class="keyword">forall</span> f . <span class="type">Functor</span> f =&gt;</span><br><span class="line">  <span class="type">Optic</span> (-&gt;) f s t a b</span><br><span class="line"></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Traversal</span> s t a b =</span></span><br><span class="line">  <span class="keyword">forall</span> f . <span class="type">Applicative</span> f =&gt;</span><br><span class="line">  <span class="type">Optic</span> (-&gt;) f s t a b</span><br><span class="line"></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Fold</span> s a =</span></span><br><span class="line">  <span class="keyword">forall</span> f . (<span class="type">Contravariant</span> f, <span class="type">Applicative</span> f) =&gt;</span><br><span class="line">  <span class="type">Optic</span> (-&gt;) f s s a a</span><br><span class="line"></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Prism</span> s t a b =</span></span><br><span class="line">  <span class="keyword">forall</span> p f . (<span class="type">Choice</span> p, <span class="type">Applicative</span> f) =&gt;</span><br><span class="line">  <span class="type">Optic</span> p f s t a b</span><br></pre></td></tr></table></figure>
+<hr>
+<p>那么先从最简单的<code>_1</code>,<code>_2</code>开始。它们的语义很简单，分别“聚焦”于一个pair的第一个元素和第二个元素。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- | A lens focusing on the first element in a pair</span></span><br><span class="line"><span class="title">_1</span> :: <span class="type">Lens</span> (a, x) (b, x) a b</span><br><span class="line"><span class="title">_1</span> = undefined</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A lens focusing on the second element in a pair</span></span><br><span class="line"><span class="title">_2</span> :: <span class="type">Lens</span> (x, a) (x, b) a b</span><br><span class="line"><span class="title">_2</span> = undefined</span><br></pre></td></tr></table></figure>
+<p>类型签名可能有些吓人，不过我们展开之后可以发现，<code>_1</code>的类型为<code>(a -&gt; f b) -&gt; ((a, x) -&gt; f (b, x))</code>，某种意义上相当于<code>pair</code>的<code>fmap</code>。<br>Follow the type，我们可以很容易地写出实现：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- | A lens focusing on the first element in a pair</span></span><br><span class="line"><span class="title">_1</span> :: <span class="type">Lens</span> (a, x) (b, x) a b</span><br><span class="line"><span class="title">_1</span> = \k (a,x) -&gt; fmap (flip (,) x) (k a)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A lens focusing on the second element in a pair</span></span><br><span class="line"><span class="title">_2</span> :: <span class="type">Lens</span> (x, a) (x, b) a b</span><br><span class="line"><span class="title">_2</span> = \k (x,a) -&gt; fmap ((,) x) (k a)</span><br></pre></td></tr></table></figure>
+<p>待续。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/" data-id="cikcoz72d000wik20v6v8e51t" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Emacs配置流水账" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/01/29/Emacs配置流水账/" class="article-date">
@@ -147,7 +198,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cik9tommi000ysz20fkkilz0d" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cikcoz72i0010ik202az7m2n2" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/29/Emacs配置流水账/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -218,7 +269,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cik9tomlv000esz20cd9km6gx" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cikcoz71t000eik2007ra21e8" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/27/coroutine/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -277,7 +328,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cik9tommm0012sz20rdh61kcu" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cikcoz72l0014ik20foo2x88u" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/24/Continuation-Monad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -328,7 +379,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cik9tomm2000ksz20ppahvwie" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cikcoz71z000kik20oa7fsmnk" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/22/Type-family快速教程/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -402,7 +453,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cik9tomme000usz20yedtftap" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cikcoz72b000uik208ztb0mu9" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/21/Monad-Transformer/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -447,7 +498,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cik9tomm6000msz204zrx1vz2" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cikcoz722000mik209o9qbwue" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -472,7 +523,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -481,7 +532,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -491,6 +542,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/02/07/Kata-Lens-Maker/">[Draft] Kata:Lens-Maker</a>
+          </li>
         
           <li>
             <a href="/2016/01/29/Emacs配置流水账/">Emacs配置流水账</a>
@@ -506,10 +561,6 @@
         
           <li>
             <a href="/2016/01/22/Type-family快速教程/">Type family快速教程</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/21/Monad-Transformer/">请问您今天要来点Monad Transformer吗？</a>
           </li>
         
       </ul>
