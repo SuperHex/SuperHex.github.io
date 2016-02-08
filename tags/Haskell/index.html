@@ -91,7 +91,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/07/Kata-Lens-Maker/">[Draft] Kata:Lens-Maker</a>
+      <a class="article-title" href="/2016/02/07/Kata-Lens-Maker/">Kata:Lens-Maker</a>
     </h1>
   
 
@@ -108,13 +108,14 @@
 <p>那么先从最简单的<code>_1</code>,<code>_2</code>开始。它们的语义很简单，分别“聚焦”于一个pair的第一个元素和第二个元素。</p>
 <figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- | A lens focusing on the first element in a pair</span></span><br><span class="line"><span class="title">_1</span> :: <span class="type">Lens</span> (a, x) (b, x) a b</span><br><span class="line"><span class="title">_1</span> = undefined</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A lens focusing on the second element in a pair</span></span><br><span class="line"><span class="title">_2</span> :: <span class="type">Lens</span> (x, a) (x, b) a b</span><br><span class="line"><span class="title">_2</span> = undefined</span><br></pre></td></tr></table></figure>
 <p>类型签名可能有些吓人，不过我们展开之后可以发现，<code>_1</code>的类型为<code>(a -&gt; f b) -&gt; ((a, x) -&gt; f (b, x))</code>，某种意义上相当于<code>pair</code>的<code>fmap</code>。<br>Follow the type，我们可以很容易地写出实现：</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- | A lens focusing on the first element in a pair</span></span><br><span class="line"><span class="title">_1</span> :: <span class="type">Lens</span> (a, x) (b, x) a b</span><br><span class="line"><span class="title">_1</span> = \k (a,x) -&gt; fmap (flip (,) x) (k a)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A lens focusing on the second element in a pair</span></span><br><span class="line"><span class="title">_2</span> :: <span class="type">Lens</span> (x, a) (x, b) a b</span><br><span class="line"><span class="title">_2</span> = \k (x,a) -&gt; fmap ((,) x) (k a)</span><br></pre></td></tr></table></figure>
-<p>待续。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- | A lens focusing on the first element in a pair</span></span><br><span class="line"><span class="title">_1</span> :: <span class="type">Lens</span> (a, x) (b, x) a b</span><br><span class="line"><span class="title">_1</span> = \f (a,x) -&gt; (, x) &lt;$&gt; f a</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A lens focusing on the second element in a pair</span></span><br><span class="line"><span class="title">_2</span> :: <span class="type">Lens</span> (x, a) (x, b) a b</span><br><span class="line"><span class="title">_2</span> = \f (x,a) -&gt; (x, ) &lt;$&gt; f a</span><br></pre></td></tr></table></figure>
+<p>update : 今天肝完了后半部分.. 然而完全不理解自己在做什么。于是放上看到的最优雅的实现，希望有朝一日我也能解释（</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- | A function which takes a lens and looks through it.</span></span><br><span class="line"><span class="comment">-- The type given is specialized to provide a hint as to</span></span><br><span class="line"><span class="comment">-- how to write 'view'. The more intuitive type for its use</span></span><br><span class="line"><span class="comment">-- is</span></span><br><span class="line"><span class="comment">--</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="comment">-- view :: Lens s t a b -&gt; (s -&gt; a)</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="title">view</span> :: <span class="type">Optic</span> (-&gt;) (<span class="type">K</span> a) s t a b -&gt; (s -&gt; a)</span><br><span class="line"><span class="title">view</span> l = getK . l <span class="type">K</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A function which takes a lens and a transformation function</span></span><br><span class="line"><span class="comment">-- and applies that transformer at the focal point of the lens.</span></span><br><span class="line"><span class="comment">-- The type given is specialized to provide a hint as to how to</span></span><br><span class="line"><span class="comment">-- write 'over'. The more intuitive type for its use is</span></span><br><span class="line"><span class="comment">--</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="comment">-- over :: Lens s t a b -&gt; (a -&gt; b) -&gt; (s -&gt; t)</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="title">over</span> :: <span class="type">Optic</span> (-&gt;) <span class="type">Id</span> s t a b -&gt; (a -&gt; b) -&gt; (s -&gt; t)</span><br><span class="line"><span class="title">over</span> l f = getId . l (<span class="type">Id</span> . f)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A function from a lens and a value which sets the value</span></span><br><span class="line"><span class="comment">-- at the focal point of the lens. The type given has been</span></span><br><span class="line"><span class="comment">-- specialized to provide a hint as to how to write 'set'. The</span></span><br><span class="line"><span class="comment">-- more intuitive type for its use is</span></span><br><span class="line"><span class="comment">--</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="comment">-- set :: Lens s t a b -&gt; b -&gt; (s -&gt; t)</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="title">set</span> :: <span class="type">Optic</span> (-&gt;) <span class="type">Id</span> s t a b -&gt; b -&gt; (s -&gt; t)</span><br><span class="line"><span class="title">set</span> l b = getId . l (<span class="type">Id</span> . const b)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A traversal which focuses on each element in any </span></span><br><span class="line"><span class="comment">-- Traversable container.</span></span><br><span class="line"><span class="title">elements</span> :: <span class="type">T</span>.<span class="type">Traversable</span> f =&gt; <span class="type">Traversal</span> (f a) (f b) a b</span><br><span class="line"><span class="title">elements</span> = <span class="type">T</span>.traverse</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A function which takes a Traversal and pulls out each </span></span><br><span class="line"><span class="comment">-- element it focuses on in order. The type has been </span></span><br><span class="line"><span class="comment">-- specialized, as the others, but a more normal type might be</span></span><br><span class="line"><span class="comment">--</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="comment">-- toListOf :: Traversal s s a a -&gt; (s -&gt; [a])</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="title">toListOf</span> :: <span class="type">Optic</span> (-&gt;) (<span class="type">K</span> (<span class="type">Endo</span> [a])) s s a a -&gt; (s -&gt; [a])</span><br><span class="line"><span class="title">toListOf</span> l s = appEndo (getK $ l (\a -&gt; <span class="type">K</span> $ <span class="type">Endo</span> (a:)) s) []</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A function which takes any kind of Optic which might</span></span><br><span class="line"><span class="comment">-- be focused on zero subparts and returns Just the first</span></span><br><span class="line"><span class="comment">-- subpart or else Nothing.</span></span><br><span class="line"><span class="comment">--</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="comment">-- preview :: Traversal s s a a -&gt; (s -&gt; Maybe a)</span></span><br><span class="line"><span class="comment">-- @</span></span><br><span class="line"><span class="title">preview</span> :: <span class="type">Optic</span> (-&gt;) (<span class="type">K</span> (<span class="type">First</span> a)) s s a a -&gt; (s -&gt; <span class="type">Maybe</span> a)</span><br><span class="line"><span class="title">preview</span> l s = getFirst (getK $ l (\a -&gt; <span class="type">K</span> $ <span class="type">First</span> $ <span class="type">Just</span> a) s)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A helper function which witnesses the fact that any</span></span><br><span class="line"><span class="comment">-- container which is both a Functor and a Contravariant</span></span><br><span class="line"><span class="comment">-- must actually be empty.</span></span><br><span class="line"><span class="title">coerce</span> :: (<span class="type">Contravariant</span> f, <span class="type">Functor</span> f) =&gt; f a -&gt; f b</span><br><span class="line"><span class="title">coerce</span> = contramap (const ()) . fmap (const ())</span><br><span class="line"></span><br><span class="line"><span class="comment">-- f a -&gt; f Void</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A Fold which views the result of a function application</span></span><br><span class="line"><span class="title">to</span> :: (a -&gt; b) -&gt; <span class="type">Fold</span> a b</span><br><span class="line"><span class="title">to</span> f g = contramap f .  g . f</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | A prism which focuses on the left branch of an Either</span></span><br><span class="line"><span class="title">_Left</span> :: <span class="type">Prism</span> (<span class="type">Either</span> a x) (<span class="type">Either</span> b x) a b</span><br><span class="line"><span class="title">_Left</span> = rmap (either (fmap <span class="type">Left</span>) (pure . <span class="type">Right</span>)) . left'</span><br><span class="line">  </span><br><span class="line"><span class="comment">-- | A prism which focuses on the right branch of an Either</span></span><br><span class="line"><span class="title">_Right</span> :: <span class="type">Prism</span> (<span class="type">Either</span> x a) (<span class="type">Either</span> x b) a b</span><br><span class="line"><span class="title">_Right</span> = rmap (either (pure . <span class="type">Left</span>) (fmap <span class="type">Right</span>)) . right'</span><br><span class="line"></span><br><span class="line"><span class="comment">-- | An iso which witnesses that tuples can be flipped without</span></span><br><span class="line"><span class="comment">-- losing any information</span></span><br><span class="line"><span class="title">_flip</span> :: <span class="type">Iso</span> (a, b) (a, b) (b, a) (b, a)</span><br><span class="line"><span class="title">_flip</span> = dimap swap (fmap swap) <span class="keyword">where</span> swap (a, b) = (b, a)</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/" data-id="cikcoz72d000wik20v6v8e51t" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/" data-id="cike43sj2000wfa20b4ax0o7b" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -198,7 +199,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cikcoz72i0010ik202az7m2n2" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cike43sj80010fa20jil4drbr" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/29/Emacs配置流水账/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -269,7 +270,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cikcoz71t000eik2007ra21e8" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cike43sii000efa20vdipwm45" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/27/coroutine/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -328,7 +329,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cikcoz72l0014ik20foo2x88u" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cike43sja0014fa20nwqdiry5" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/24/Continuation-Monad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -379,7 +380,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cikcoz71z000kik20oa7fsmnk" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cike43sin000kfa2068y4iali" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/22/Type-family快速教程/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -453,7 +454,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cikcoz72b000uik208ztb0mu9" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cike43siz000ufa20nucsgrvb" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/21/Monad-Transformer/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -554,7 +555,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cikcoz72f000yik20xwmbcguo" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cike43sj5000yfa20vsazlb6s" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -623,7 +624,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cikcoz726000pik20zl1ow1iv" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cike43siv000pfa206nxeyn6x" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/10/06/Monad习作二则/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -669,7 +670,7 @@
       <ul>
         
           <li>
-            <a href="/2016/02/07/Kata-Lens-Maker/">[Draft] Kata:Lens-Maker</a>
+            <a href="/2016/02/07/Kata-Lens-Maker/">Kata:Lens-Maker</a>
           </li>
         
           <li>
