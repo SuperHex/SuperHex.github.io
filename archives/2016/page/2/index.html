@@ -3,21 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>使用Haskell和LLVM实现JIT编译的语言 0x00 | 妄想神社</title>
+  <title>Archives: 2016 | 妄想神社</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="这篇文章翻译自Stephen Diehl的Blog，鉴于原文的长度，这将会是个天坑。
-那么，为什么要翻译这篇文章呢？主要还是由于Stephen Diehl大神的文章实在是让人大开眼界（特别是这篇，当初看过LYAH之后就该直接来刷这个的，简直跟翻开一本黑魔法书一样）。并且，这篇blog的深度正好适合“入门”之后的中级Haskeller。这个项目从头到尾自己敲一遍基本上Haskell的种种特性就熟悉了">
-<meta property="og:type" content="article">
-<meta property="og:title" content="使用Haskell和LLVM实现JIT编译的语言 0x00">
-<meta property="og:url" content="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/index.html">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="妄想神社">
+<meta property="og:url" content="http://superhex.github.io/archives/2016/page/2/index.html">
 <meta property="og:site_name" content="妄想神社">
-<meta property="og:description" content="这篇文章翻译自Stephen Diehl的Blog，鉴于原文的长度，这将会是个天坑。
-那么，为什么要翻译这篇文章呢？主要还是由于Stephen Diehl大神的文章实在是让人大开眼界（特别是这篇，当初看过LYAH之后就该直接来刷这个的，简直跟翻开一本黑魔法书一样）。并且，这篇blog的深度正好适合“入门”之后的中级Haskeller。这个项目从头到尾自己敲一遍基本上Haskell的种种特性就熟悉了">
-<meta property="og:updated_time" content="2016-01-21T15:51:37.000Z">
+<meta property="og:description">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用Haskell和LLVM实现JIT编译的语言 0x00">
-<meta name="twitter:description" content="这篇文章翻译自Stephen Diehl的Blog，鉴于原文的长度，这将会是个天坑。
-那么，为什么要翻译这篇文章呢？主要还是由于Stephen Diehl大神的文章实在是让人大开眼界（特别是这篇，当初看过LYAH之后就该直接来刷这个的，简直跟翻开一本黑魔法书一样）。并且，这篇blog的深度正好适合“入门”之后的中级Haskeller。这个项目从头到尾自己敲一遍基本上Haskell的种种特性就熟悉了">
+<meta name="twitter:title" content="妄想神社">
+<meta name="twitter:description">
   
     <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
   
@@ -79,10 +75,12 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-Implementing-a-JIT-compiled-Language" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main">
+  
+    <article id="post-Template-template-parameters" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2015/11/01/Implementing-a-JIT-compiled-Language/" class="article-date">
-  <time datetime="2015-11-01T14:02:38.000Z" itemprop="datePublished">11月 1 2015</time>
+    <a href="/2016/01/05/Template-template-parameters/" class="article-date">
+  <time datetime="2016-01-05T14:28:27.000Z" itemprop="datePublished">1月 5 2016</time>
 </a>
     
   </div>
@@ -92,8 +90,8 @@
       <header class="article-header">
         
   
-    <h1 class="article-title" itemprop="name">
-      使用Haskell和LLVM实现JIT编译的语言 0x00
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/05/Template-template-parameters/">Template-template parameters</a>
     </h1>
   
 
@@ -101,110 +99,34 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>这篇文章翻译自<a href="http://www.stephendiehl.com/llvm/" target="_blank" rel="external">Stephen Diehl的Blog</a>，鉴于原文的长度，这将会是个天坑。</p>
-<p>那么，为什么要翻译这篇文章呢？主要还是由于Stephen Diehl大神的文章实在是让人大开眼界（特别是<a href="http://dev.stephendiehl.com/hask/" target="_blank" rel="external">这篇</a>，当初看过LYAH之后就该直接来刷这个的，简直跟翻开一本黑魔法书一样）。并且，这篇blog的深度正好适合“入门”之后的中级Haskeller。这个项目从头到尾自己敲一遍基本上Haskell的种种特性就熟悉了（笑）。</p>
-<p>注：本文会夹杂大量私货，同时会补充原文中不易理解的地方，如有错误还请指正。</p>
-<p>那么，在开始之前，先放上目录吧。</p>
-<hr>
-<h4 id="Chapter_1_(引言)">Chapter 1 (引言)</h4><ul>
-<li>设置</li>
-<li>基本语言</li>
-<li>LLVM 介绍</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter_2_(语法分析(Parser)和抽象语法树(AST))">Chapter 2 (语法分析(Parser)和抽象语法树(AST))</h4><ul>
-<li>Parser组合子(Parser Combinator)</li>
-<li>词法分析器(Lexer)</li>
-<li>语法分析器(Parser)</li>
-<li>REPL</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter_3_(代码生成)">Chapter 3 (代码生成)</h4><ul>
-<li>Haskell LLVM绑定</li>
-<li>代码生成设置</li>
-<li>代码块(Blocks)</li>
-<li>指令(Instruction)</li>
-<li>从抽象语法树到中间语言(IR)</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter_4_(JIT_和优化器支持)">Chapter 4 (JIT 和优化器支持)</h4><ul>
-<li>抽象语法树和模块(Modules)</li>
-<li>常量折叠(Constant Folding)</li>
-<li>Optimization Passes(优化阶段？)</li>
-<li>添加一个JIT编译器</li>
-<li>外部函数</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter_5_(控制流)">Chapter 5 (控制流)</h4><ul>
-<li>“if”表达式</li>
-<li>“for”循环表达式</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter_6_(运算符)">Chapter 6 (运算符)</h4><ul>
-<li>用户定义的运算符</li>
-<li>二元运算符</li>
-<li>一元运算符</li>
-<li>Kicking the Tires  &lt;- 这个太不好翻译了（逃</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter_7_(变量)">Chapter 7 (变量)</h4><ul>
-<li>为什么这是一个困难的问题</li>
-<li>LLVM中的内存</li>
-<li>变量</li>
-<li>赋值</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter_8_(结语)">Chapter 8 (结语)</h4><ul>
-<li>教程总结</li>
-</ul>
-<h4 id="Chapter_9_(附录)">Chapter 9 (附录)</h4><ul>
-<li>命令行工具</li>
-</ul>
-<p>如果有时间的话大概会实现一些扩展功能，到时候再加上吧。</p>
-<hr>
+        <p>虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">template</span> &lt;<span class="keyword">typename</span>&gt; <span class="keyword">class</span> m&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;b&gt; mbind(<span class="keyword">const</span> m&lt;a&gt;&amp;, m&lt;b&gt;(*)(<span class="keyword">const</span> a&amp;));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line"><span class="keyword">struct</span> Maybe &#123;</span><br><span class="line">    <span class="keyword">bool</span> isNothing;</span><br><span class="line">    a value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad&lt;Maybe&gt; &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp; v) &#123;</span><br><span class="line">        Maybe&lt;a&gt; x;</span><br><span class="line">        x.isNothing = <span class="literal">false</span>;</span><br><span class="line">        x.value = v;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;b&gt; mbind(<span class="keyword">const</span> Maybe&lt;a&gt;&amp; action, Maybe&lt;b&gt;(*function)(<span class="keyword">const</span> a&amp;)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (action.isNothing)</span><br><span class="line">            <span class="keyword">return</span> action;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> function(action.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>相关链接：</p>
+<p><a href="http://stackoverflow.com/questions/2565097/higher-kinded-types-with-c" target="_blank" rel="external">Higher-kinded Types with C++</a></p>
+<p><a href="http://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters-in-c" target="_blank" rel="external">What are some uses of template template parameters in C++?</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cim7vm8dy0011rj208fzhxtqn" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cim7vm8dk000prj201n4ynppp" class="article-share-link">Share</a>
       
-        <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C++</a></li></ul>
 
     </footer>
   </div>
   
-    
-<nav id="article-nav">
-  
-    <a href="/2015/12/31/2015什么的，就这么过完了呢/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          2015什么的，就这么过完了呢
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2015/10/06/Monad习作二则/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">[开个大坑] Monad习作二则</div>
-    </a>
-  
-</nav>
-
-  
 </article>
 
 
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/archives/2016/">&laquo; Prev</a><a class="page-number" href="/archives/2016/">1</a><span class="page-number current">2</span>
+    </nav>
+  
 </section>
         
           <aside id="sidebar">
@@ -286,13 +208,11 @@
 <script>
   var disqus_shortname = 'coderenaissance';
   
-  var disqus_url = 'http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/';
-  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//go.disqus.com/embed.js';
+    dsq.src = '//go.disqus.com/count.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>
