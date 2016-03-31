@@ -77,6 +77,52 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Comments-on-Extensible-Effects" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/03/24/Comments-on-Extensible-Effects/" class="article-date">
+  <time datetime="2016-03-24T14:22:39.000Z" itemprop="datePublished">3月 24 2016</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/24/Comments-on-Extensible-Effects/">[Comments on] Extensible Effects</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近在读Oleg的这篇<a href="http://okmij.org/ftp/Haskell/extensible/index.html" target="_blank" rel="external">Extensible Effects</a>。<br>根据paper里的说法可以替代Monad Transformer的使用并且还能做到一些Transformer做不到的事情。<br>具体怎么样呢… 我也还没有试过，不过草草翻了一遍之后发现实现的思路非常有趣，于是写个笔记。</p>
+<p>引言部分自然是在说Monad Transformer的坏话了。这种堆起一串长长的stack的模式的确也被很多人诟病过…<br>不过Transformer最显著的缺点还是在于它是静态的，对于需要插入一些动态effect的场景不太适用。</p>
+<h2 id="Extensible_Effects_Framework">Extensible Effects Framework</h2><p>这里给出Eff Monad的一个preview，看起来还是非常优雅的。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="type">Void</span></span></span><br><span class="line"><span class="title">run</span> :: <span class="type">Eff</span> <span class="type">Void</span> w -&gt; w</span><br><span class="line"></span><br><span class="line"><span class="comment">-- Reader Effect</span></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Reader</span> e</span></span><br><span class="line"><span class="title">ask</span>       :: (<span class="type">Typeable</span> e, <span class="type">Member</span> (<span class="type">Reader</span> e) r) =&gt; <span class="type">Eff</span> r e</span><br><span class="line"><span class="title">local</span>     :: (<span class="type">Typeable</span> e, <span class="type">Member</span> (<span class="type">Reader</span> e) r) =&gt; (e -&gt; e) -&gt; <span class="type">Eff</span> r w -&gt; <span class="type">Eff</span> r w</span><br><span class="line"><span class="title">runReader</span> :: <span class="type">Typeable</span> e =&gt;</span><br><span class="line">             <span class="type">Eff</span> (<span class="type">Reader</span> e ▷ r) w -&gt; e -&gt; <span class="type">Eff</span> r w</span><br><span class="line">             </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>这里的effect使用一个开集（open union）<code>r</code>来表示。有两种方法表明一个effect是这个集合的一部分。<br>第一种办法是使用类型约束<code>Member m r</code>，表明一个副作用<code>m</code>是集合<code>r</code>的一部分。<br>另一种办法是显式的pattern <code>(m ▷ r&#39;)</code>，这将集合<code>r</code>分解为一个副作用<code>m</code>和剩下的部分<code>r&#39;</code>。<br>现在，纯的计算可以表示为<code>Eff Void a</code>，而<code>Eff (Reader Int ▷ Reader Bool ▷ Void) a</code>表示了能够接近两个环境(Int和Bool)的计算。</p>
+<p>（待更）</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2016/03/24/Comments-on-Extensible-Effects/" data-id="cimgdk1af0019xc20regkr83x" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2016/03/24/Comments-on-Extensible-Effects/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-excited" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/02/09/excited/" class="article-date">
@@ -119,7 +165,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/02/09/excited/" data-id="cimgdbs3m000fwb200fv9umm5" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/02/09/excited/" data-id="cimgdk19l000fxc20v6sk9gdw" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/02/09/excited/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -171,7 +217,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/" data-id="cimgdbs48000zwb2001yqad8t" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/" data-id="cimgdk1a8000zxc203v9gmbzq" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -255,7 +301,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cimgdbs4c0013wb20w47ay8d3" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cimgdk1ac0013xc20itemyisu" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/29/Emacs配置流水账/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -326,7 +372,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cimgdbs3q000iwb20vhtgpbti" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cimgdk19o000ixc20zet6cawl" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/27/coroutine/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -385,7 +431,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cimgdbs4e0017wb20dvnnb2f7" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cimgdk1ae0017xc20lyzicse3" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/24/Continuation-Monad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -436,7 +482,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cimgdbs3w000nwb20pej5t0wv" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cimgdk19v000nxc203dpa6zdu" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/22/Type-family快速教程/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -510,7 +556,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cimgdbs46000xwb209k2zrgga" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cimgdk1a5000xxc209llh0ees" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/21/Monad-Transformer/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -611,7 +657,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cimgdbs4a0011wb20lcci5w6j" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cimgdk1aa0011xc20xczxbrtv" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -625,75 +671,10 @@
 
 
   
-    <article id="post-Monad习作二则" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/10/06/Monad习作二则/" class="article-date">
-  <time datetime="2015-10-06T12:05:04.000Z" itemprop="datePublished">10月 6 2015</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/10/06/Monad习作二则/">[开个大坑] Monad习作二则</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>虽说一直很懒不过发现神社已经有一年多的时间没有打理的时候还是很吃惊。想想真是惭愧，不过没有人来参拜果然还是没有什么动力更新呢（趴）。</p>
-<p>说起来这一年里几乎没干什么值得一提的事情。一如往常地挖了好多的坑，填上的也没有几个。最大的收获或许就是Haskell终于感觉入了一点门，虽然依然不太敢用来写程序就是了。</p>
-<p>那么！今天的主角自然就是Haskell了，准确的说应该就是这个名声在外的<code>Monad</code>（笑）。</p>
-<p>诶等等别跑啊我还没说完呢！</p>
-<p>在这里吾辈自然是不会说什么</p>
-<blockquote>
-<p>Monad不过是自函子范畴上的幺半群而已，不懂的都是⑨！</p>
-</blockquote>
-<p>之类的老梗啦ww 毕竟有关Monad的教程实在是太多了，所以这里吾辈只是简单谈谈对于Monad的理解。</p>
-<h3 id="TL;DR">TL;DR</h3><p><strong>Monad就是可编程的分号。</strong></p>
-<p>对于新手而言对这句话肯定是一头雾水吧ww 其实配合例子来看非常简单。</p>
-<p>那么现在假设我们要做一个数字电子线路的仿真系统。让我们要求高一点，这个系统要有<em>时延</em>。于是我们可以用这么个类型来表达这些信息：</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">newtype</span>  <span class="type">Signal</span> a = <span class="type">Signal</span> <span class="container">&#123; <span class="title">time</span> :: <span class="type">Int</span>, <span class="title">value</span> :: <span class="title">a</span> &#125;</span></span></span><br></pre></td></tr></table></figure>
-<p>非常简单，对吧？这个类型实际上就可以看作附加了时间上下文（<code>time :: Int</code>）的值。</p>
-<p>有了基本的表示类型，下面我们来表示一些基本元件。假设我们的需求很简单，只需要非门就够了：</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">notGate</span> :: a -&gt; <span class="type">Signal</span> a</span><br><span class="line"><span class="title">notGate</span> something = <span class="type">Signal</span> &#123; time = <span class="number">1</span>, value = not something &#125;</span><br></pre></td></tr></table></figure>
-<p>对于任何传进来的信号，我们的非门将它附加一个非门时延，然后将输入取反。</p>
-<p>那么现在问题来了。这个非门如何处理已经带有一个时延的信号？当然，我们在创建基本类型的时候用了<code>Record Syntax</code>，所以可以构造这样一个函数，对每个<code>Signal a</code>，将其中的<code>value</code>送给非门，将时延相加。于是可以这样：</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">bind</span> :: <span class="type">Signal</span> a -&gt; (a -&gt; <span class="type">Signal</span> b) -&gt; <span class="type">Signal</span> b</span><br><span class="line"><span class="title">bind</span> (<span class="type">Signal</span> t s) f = <span class="keyword">let</span> r = f s</span><br><span class="line">                      <span class="keyword">in</span> r &#123; time = time r + t &#125;</span><br></pre></td></tr></table></figure>
-<p>到这里，其实你已经实现了Monad的核心了。剩下的无非是实现<code>return</code>。对于普通的值，我们希望它的时延为0:</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">Signal</span> <span class="keyword">where</span></span></span><br><span class="line">truereturn a = <span class="type">Signal</span> <span class="number">0</span> a</span><br><span class="line">true(<span class="type">Signal</span> t s) &gt;&gt;= f = <span class="keyword">let</span> r = f s</span><br><span class="line">true                <span class="keyword">in</span> r &#123; time = time r + t &#125;</span><br></pre></td></tr></table></figure>
-<p>就是这么简单。现在我们可以享受Haskell的<code>do</code>语法糖了</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">delay2</span> :: a -&gt; <span class="type">Signal</span> a</span><br><span class="line"><span class="title">delay2</span> a = <span class="keyword">do</span></span><br><span class="line">truet &lt;- notGate a</span><br><span class="line">truenotGate t</span><br></pre></td></tr></table></figure>
-<p>你看，<code>Monad</code>不过也就是这么个小儿科的东西。它只不过是一种保持你所定义的类型所附带的额外信息的结构罢了。现在再回想一下前面那句“Monad就是可编程的分号”是不是感觉明白了很多呢。</p>
-<p>P.S. 关于为什么只实现了非门，其实是由于这种模拟方法处理时间有一点麻烦… 例如与门，就需要处理时间同步的问题。这里就不涉及了。</p>
-<p>下面放上最初的两个习作，也正是实现了这两种<code>Monad</code>吾辈才感觉差不多理解了<code>Monad</code>。下一步就要去研究<code>Monad Transformer</code>了，是个更大更深的坑呢。</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Monad implemented here.</span></span><br><span class="line"><span class="comment">-- beacuse since GHC 7.10 there must be</span></span><br><span class="line"><span class="comment">-- Functor =&gt; Applicative =&gt; Monad</span></span><br><span class="line"><span class="comment">-- so we have to build it from scratch</span></span><br><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">M</span> a = <span class="type">M</span> <span class="container">&#123; <span class="title">time</span> :: <span class="type">Int</span>, <span class="title">value</span> :: <span class="title">a</span> &#125;</span> </span></span><br><span class="line">            <span class="keyword">deriving</span> (<span class="type">Show</span>, <span class="type">Eq</span>)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Functor</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    f `fmap` a = a &#123; value = f (value a) &#125;</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    pure = <span class="type">M</span> <span class="number">0</span></span><br><span class="line">    (<span class="type">M</span> t f) &lt;*&gt; s = fmap f (s &#123; time = time s + t&#125; )</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    return = pure</span><br><span class="line">    (<span class="type">M</span> t s) &gt;&gt;= f = <span class="keyword">let</span> r = f s</span><br><span class="line">                    <span class="keyword">in</span> r &#123; time = time r + t&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">-- A more complicated one</span></span><br><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">T</span> a = <span class="type">T</span> <span class="container">&#123; <span class="title">runT</span> :: <span class="type">Int</span> -&gt; <span class="title">a</span> &#125;</span></span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    return a = <span class="type">T</span> $ const a</span><br><span class="line">    x &gt;&gt;= f = <span class="type">T</span> $ \t -&gt; runT (f (runT x t)) t</span><br><span class="line">    <span class="comment">-- x :: (Int -&gt; a)</span></span><br><span class="line">    <span class="comment">-- f :: a -&gt; (Int -&gt; a)</span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    pure = return</span><br><span class="line">    (<span class="type">T</span> f) &lt;*&gt; x = <span class="type">T</span> $ \t -&gt; f t (runT x t)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Functor</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    f `fmap` a = <span class="type">T</span> $ \t -&gt; f (runT a t)</span><br></pre></td></tr></table></figure>
-<p>关于为什么第二个实现是倒序的… 螃蟹卡农。嗯。</p>
-<p>今天的幻想乡也很和平呢。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cimgdbs42000swb203tdazwjn" class="article-share-link">Share</a>
-      
-        <a href="http://superhex.github.io/2015/10/06/Monad习作二则/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/瞎扯/">瞎扯</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/脑洞/">脑洞</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/tags/Haskell/page/2/">2</a><a class="extend next" rel="next" href="/tags/Haskell/page/2/">Next &raquo;</a>
+    </nav>
   
 </section>
         
@@ -705,7 +686,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -714,7 +695,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -724,6 +705,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/03/24/Comments-on-Extensible-Effects/">[Comments on] Extensible Effects</a>
+          </li>
         
           <li>
             <a href="/2016/02/14/行程备忘/">行程备忘</a>
@@ -739,10 +724,6 @@
         
           <li>
             <a href="/2016/01/29/Emacs配置流水账/">Emacs配置流水账</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/27/coroutine/">使用Continuation Monad实现Coroutine</a>
           </li>
         
       </ul>

@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Template-template parameters | 妄想神社</title>
+  <title>[Comments on] Extensible Effects | 妄想神社</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！
-123456789101112131415161718192021222324252627282930313233template &amp;lt;template &amp;lt;typename&amp;gt; class m&amp;gt;struct Monad &amp;#123;    tem">
+  <meta name="description" content="最近在读Oleg的这篇Extensible Effects。根据paper里的说法可以替代Monad Transformer的使用并且还能做到一些Transformer做不到的事情。具体怎么样呢… 我也还没有试过，不过草草翻了一遍之后发现实现的思路非常有趣，于是写个笔记。
+引言部分自然是在说Monad Transformer的坏话了。这种堆起一串长长的stack的模式的确也被很多人诟病过…不过Tr">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Template-template parameters">
-<meta property="og:url" content="http://superhex.github.io/2016/01/05/Template-template-parameters/index.html">
+<meta property="og:title" content="[Comments on] Extensible Effects">
+<meta property="og:url" content="http://superhex.github.io/2016/03/24/Comments-on-Extensible-Effects/index.html">
 <meta property="og:site_name" content="妄想神社">
-<meta property="og:description" content="虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！
-123456789101112131415161718192021222324252627282930313233template &amp;lt;template &amp;lt;typename&amp;gt; class m&amp;gt;struct Monad &amp;#123;    tem">
-<meta property="og:updated_time" content="2016-01-05T14:39:46.000Z">
+<meta property="og:description" content="最近在读Oleg的这篇Extensible Effects。根据paper里的说法可以替代Monad Transformer的使用并且还能做到一些Transformer做不到的事情。具体怎么样呢… 我也还没有试过，不过草草翻了一遍之后发现实现的思路非常有趣，于是写个笔记。
+引言部分自然是在说Monad Transformer的坏话了。这种堆起一串长长的stack的模式的确也被很多人诟病过…不过Tr">
+<meta property="og:updated_time" content="2016-03-31T14:26:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Template-template parameters">
-<meta name="twitter:description" content="虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！
-123456789101112131415161718192021222324252627282930313233template &amp;lt;template &amp;lt;typename&amp;gt; class m&amp;gt;struct Monad &amp;#123;    tem">
+<meta name="twitter:title" content="[Comments on] Extensible Effects">
+<meta name="twitter:description" content="最近在读Oleg的这篇Extensible Effects。根据paper里的说法可以替代Monad Transformer的使用并且还能做到一些Transformer做不到的事情。具体怎么样呢… 我也还没有试过，不过草草翻了一遍之后发现实现的思路非常有趣，于是写个笔记。
+引言部分自然是在说Monad Transformer的坏话了。这种堆起一串长长的stack的模式的确也被很多人诟病过…不过Tr">
   
     <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
   
@@ -79,10 +79,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-Template-template-parameters" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-Comments-on-Extensible-Effects" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/01/05/Template-template-parameters/" class="article-date">
-  <time datetime="2016-01-05T14:28:27.000Z" itemprop="datePublished">1月 5 2016</time>
+    <a href="/2016/03/24/Comments-on-Extensible-Effects/" class="article-date">
+  <time datetime="2016-03-24T14:22:39.000Z" itemprop="datePublished">3月 24 2016</time>
 </a>
     
   </div>
@@ -93,7 +93,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Template-template parameters
+      [Comments on] Extensible Effects
     </h1>
   
 
@@ -101,21 +101,22 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">template</span> &lt;<span class="keyword">typename</span>&gt; <span class="keyword">class</span> m&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;b&gt; mbind(<span class="keyword">const</span> m&lt;a&gt;&amp;, m&lt;b&gt;(*)(<span class="keyword">const</span> a&amp;));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line"><span class="keyword">struct</span> Maybe &#123;</span><br><span class="line">    <span class="keyword">bool</span> isNothing;</span><br><span class="line">    a value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad&lt;Maybe&gt; &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp; v) &#123;</span><br><span class="line">        Maybe&lt;a&gt; x;</span><br><span class="line">        x.isNothing = <span class="literal">false</span>;</span><br><span class="line">        x.value = v;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;b&gt; mbind(<span class="keyword">const</span> Maybe&lt;a&gt;&amp; action, Maybe&lt;b&gt;(*function)(<span class="keyword">const</span> a&amp;)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (action.isNothing)</span><br><span class="line">            <span class="keyword">return</span> action;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> function(action.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>相关链接：</p>
-<p><a href="http://stackoverflow.com/questions/2565097/higher-kinded-types-with-c" target="_blank" rel="external">Higher-kinded Types with C++</a></p>
-<p><a href="http://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters-in-c" target="_blank" rel="external">What are some uses of template template parameters in C++?</a></p>
+        <p>最近在读Oleg的这篇<a href="http://okmij.org/ftp/Haskell/extensible/index.html" target="_blank" rel="external">Extensible Effects</a>。<br>根据paper里的说法可以替代Monad Transformer的使用并且还能做到一些Transformer做不到的事情。<br>具体怎么样呢… 我也还没有试过，不过草草翻了一遍之后发现实现的思路非常有趣，于是写个笔记。</p>
+<p>引言部分自然是在说Monad Transformer的坏话了。这种堆起一串长长的stack的模式的确也被很多人诟病过…<br>不过Transformer最显著的缺点还是在于它是静态的，对于需要插入一些动态effect的场景不太适用。</p>
+<h2 id="Extensible_Effects_Framework">Extensible Effects Framework</h2><p>这里给出Eff Monad的一个preview，看起来还是非常优雅的。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="type">Void</span></span></span><br><span class="line"><span class="title">run</span> :: <span class="type">Eff</span> <span class="type">Void</span> w -&gt; w</span><br><span class="line"></span><br><span class="line"><span class="comment">-- Reader Effect</span></span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Reader</span> e</span></span><br><span class="line"><span class="title">ask</span>       :: (<span class="type">Typeable</span> e, <span class="type">Member</span> (<span class="type">Reader</span> e) r) =&gt; <span class="type">Eff</span> r e</span><br><span class="line"><span class="title">local</span>     :: (<span class="type">Typeable</span> e, <span class="type">Member</span> (<span class="type">Reader</span> e) r) =&gt; (e -&gt; e) -&gt; <span class="type">Eff</span> r w -&gt; <span class="type">Eff</span> r w</span><br><span class="line"><span class="title">runReader</span> :: <span class="type">Typeable</span> e =&gt;</span><br><span class="line">             <span class="type">Eff</span> (<span class="type">Reader</span> e ▷ r) w -&gt; e -&gt; <span class="type">Eff</span> r w</span><br><span class="line">             </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>这里的effect使用一个开集（open union）<code>r</code>来表示。有两种方法表明一个effect是这个集合的一部分。<br>第一种办法是使用类型约束<code>Member m r</code>，表明一个副作用<code>m</code>是集合<code>r</code>的一部分。<br>另一种办法是显式的pattern <code>(m ▷ r&#39;)</code>，这将集合<code>r</code>分解为一个副作用<code>m</code>和剩下的部分<code>r&#39;</code>。<br>现在，纯的计算可以表示为<code>Eff Void a</code>，而<code>Eff (Reader Int ▷ Reader Bool ▷ Void) a</code>表示了能够接近两个环境(Int和Bool)的计算。</p>
+<p>（待更）</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cimgdk19y000pxc208bp5euce" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/03/24/Comments-on-Extensible-Effects/" data-id="cimgdk1af0019xc20regkr83x" class="article-share-link">Share</a>
       
-        <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://superhex.github.io/2016/03/24/Comments-on-Extensible-Effects/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C++</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
 
     </footer>
   </div>
@@ -123,19 +124,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/01/21/Monad-Transformer/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          请问您今天要来点Monad Transformer吗？
-        
-      </div>
-    </a>
   
-  
-    <a href="/2015/12/31/2015什么的，就这么过完了呢/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/02/14/行程备忘/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">2015什么的，就这么过完了呢</div>
+      <div class="article-nav-title">行程备忘</div>
     </a>
   
 </nav>
@@ -230,7 +222,7 @@
 <script>
   var disqus_shortname = 'coderenaissance';
   
-  var disqus_url = 'http://superhex.github.io/2016/01/05/Template-template-parameters/';
+  var disqus_url = 'http://superhex.github.io/2016/03/24/Comments-on-Extensible-Effects/';
   
   (function(){
     var dsq = document.createElement('script');
