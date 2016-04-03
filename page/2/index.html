@@ -77,6 +77,80 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Monad-Transformer" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/21/Monad-Transformer/" class="article-date">
+  <time datetime="2016-01-21T13:22:14.000Z" itemprop="datePublished">1月 21 2016</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/21/Monad-Transformer/">请问您今天要来点Monad Transformer吗？</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近在思考关于Hakell的学习曲线的问题。Haskell的入门难已经广为人知了吧… 虽然我从一窍不通到现在缺失经历了很长一段时间的挣扎，不过我还是很好奇这个难度的实体究竟是什么。如果说<code>Monad</code>对新手来说是第一道难以逾越的门槛的话，那么搞清楚后面几道难关是什么队学习总是会有些帮助。粗略地看起来，Haskell中的难度大概有这么几个方面：</p>
+<ul>
+<li>副作用: Monad -&gt; Monad Transformer -&gt; Comonad -&gt; Continuation Monad -&gt; Free Monad -&gt; ….</li>
+<li>并发模型: MVar -&gt; STM -&gt; …</li>
+<li>并行模型: Eval Monad -&gt; Par Monad -&gt; …</li>
+<li>运行时特性: Template Haskell -&gt; Quasi Qoutation -&gt; …</li>
+<li>类型系统: Type Family -&gt; …</li>
+</ul>
+<p>然而就算搞懂了以上这些非常抽象的概念之后，Haskell也才刚刚只是算入门而已（更不要再算上GHC那些进化的比我学习都快的特性了）。嘛，一门能搞一辈子的语言，不也是挺好的嘛。</p>
+<p>好了那么言归正传，今天就来谈一谈<code>Monad Transformer</code>这个东西。</p>
+<h2 id="为什么需要Monad_Transformer？">为什么需要Monad Transformer？</h2><p>我们知道Monad是隐式保存了额外状态信息的计算过程，那么既然有了<code>Monad</code>，为什么还需要<code>Monad Transformer</code>呢？</p>
+<p>解释起来很简单。每一种<code>Monad</code>都有其独特的功能，比如<code>Reader Monad</code>提供了类似全局(不)变量的功能，<code>Writer Monad</code>提供了计算同时记录信息的功能，<code>State Monad</code>提供了可变状态，<code>IO Monad</code>提供了副作用。这些<code>Monad</code>各有各的功能，但是，我要是想并发地执行多个线程，它们共享一个配置文件，其中每条线程读取硬盘上的一些文件，并能在读取失败的时候保存日志，要怎么办？这些<code>Monad</code>各司其职这很好，但我们需要一种手段把它们组合起来，于是这里就用到了<code>Monad Transformer</code>。</p>
+<h2 id="好吧…_但Monad_Transformer究竟是什么？">好吧… 但Monad Transformer究竟是什么？</h2><p>本质上说，<code>Monad Transformer</code>就是一个个<code>Monad</code>堆起来的栈。可以想象一个洋葱，最里面的一层是原始的<code>Monad</code>，每在外面增加一层就会增加一层<code>Monad</code>的功能。比较有意思的一点是，<code>Monad Transformer</code>依然可以被当作<code>Monad Transformer</code>的参数，也就是说可以组合出任意复杂的<code>Monad Transformer</code>来（类比把<code>Monad</code>堆得任意高）。</p>
+<h2 id="Shut_up_and_show_me_the_code!">Shut up and show me the code!</h2><p>考虑上面说的那个例子。首先我们需要一些<code>IO</code>操作，所以在最底层我们放置<code>IO Monad</code>。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">foo</span> :: <span class="type">IO</span> <span class="type">String</span></span><br><span class="line"><span class="title">foo</span> = readFile <span class="string">"foo.txt"</span></span><br></pre></td></tr></table></figure>
+<p>硬编码总不是一件好事，对吧？我们来把要读取得文件名写成配置文件：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">Config</span> = <span class="type">Config</span> <span class="container">&#123; <span class="title">fileName</span> :: <span class="type">String</span> &#125;</span> <span class="keyword">deriving</span> <span class="type">Show</span></span></span><br><span class="line"></span><br><span class="line"><span class="title">defaultConfig</span> :: <span class="type">Reader</span> <span class="type">Config</span> <span class="type">Config</span></span><br><span class="line"><span class="title">defaultConfig</span> = return $ <span class="type">Config</span> &#123; fileName = <span class="string">"foo.txt"</span> &#125;</span><br></pre></td></tr></table></figure>
+<p>现在为了在<code>IO Monad</code>中使用这个配置文件，我们就要用到<code>ReaderT</code>了：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- newtype ReaderT r m a</span></span><br><span class="line"><span class="title">foo</span> :: <span class="type">ReaderT</span> <span class="type">Config</span> <span class="type">IO</span> <span class="type">String</span></span><br><span class="line"><span class="title">foo</span> = <span class="keyword">do</span></span><br><span class="line">    name &lt;- ask</span><br><span class="line">    liftIO $ readFile name</span><br></pre></td></tr></table></figure>
+<p>关于<code>liftIO</code>的事情之后再讨论，现在可以这样使用它：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- runReaderT :: ReaderT r m a -&gt; r -&gt; m a</span></span><br><span class="line"><span class="title">getFoo</span> :: <span class="type">IO</span> <span class="type">String</span></span><br><span class="line"><span class="title">getFoo</span> = runReaderT foo defaultConfig</span><br></pre></td></tr></table></figure>
+<h2 id="再多一点Monad_Transformer!">再多一点Monad Transformer!</h2><p>好吧。现在我们希望<code>foo</code>在做<code>IO</code>操作的时候需要打印日志。这么做似乎没有什么特别的理由，但是现实世界本来就不是讲道理的对吧w。这时候我们就需要用到<code>Writer Monad</code>，同时我们的程序会变成这样：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">foo</span> :: <span class="type">ReaderT</span> <span class="type">Config</span> (<span class="type">WriterT</span> <span class="type">String</span> <span class="type">IO</span>) a</span><br><span class="line"><span class="title">foo</span> = <span class="keyword">do</span></span><br><span class="line">    name &lt;- ask</span><br><span class="line">    liftIO $ readFile name</span><br><span class="line">    lift . tell $ <span class="string">"I am reading "</span> ++ name ++ <span class="string">" !"</span></span><br></pre></td></tr></table></figure>
+<p>好吧，<code>lift</code>又是什么？读者可以先自行猜测一下，我们这里先不理会它。实际上我们发现，在使用了<code>Monad Transformer</code>之后，除了类型签名变得不太雅致以外，我们完全不用任何特殊的写法就可以同时获得三个<code>Monad</code>的功能（忽略那些<code>lift</code>的话… 事实上，的确可以忽略），这真是太棒了！</p>
+<h2 id="lift！lift！lift！">lift！lift！lift！</h2><p>前面出现了许多奇奇怪怪的<code>lift</code>操作，什么是<code>lift</code>?我们来看一下它的签名：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">MonadTrans</span> <span class="container">(<span class="title">t</span> :: (* -&gt; *)</span> -&gt; * -&gt; *) <span class="keyword">where</span></span></span><br><span class="line">  lift :: <span class="type">Monad</span> m =&gt; m a -&gt; t m a</span><br><span class="line">  	<span class="comment">-- Defined in ‘Control.Monad.Trans.Class’</span></span><br></pre></td></tr></table></figure>
+<p>这里需要说明的是，如果不加任何提示，默认是会留在最外层的<code>Monad</code>的。比如两个<code>State Monad</code>叠在一起：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">bar</span> :: <span class="type">StateT</span> <span class="type">Int</span> (<span class="type">State</span> <span class="type">String</span>) (<span class="type">String</span>,<span class="type">Int</span>)</span><br><span class="line"><span class="title">bar</span> = <span class="keyword">do</span></span><br><span class="line">    modify (+<span class="number">1</span>)                 <span class="comment">-- outer monad</span></span><br><span class="line">    lift $ modify (++ <span class="string">"1"</span>)	<span class="comment">-- inner monad</span></span><br><span class="line">    a &lt;- get</span><br><span class="line">    b &lt;- lift get</span><br><span class="line">    return (b,a)</span><br></pre></td></tr></table></figure>
+<p>这就属于需要显示说明的情况。而不同的<code>Monad</code>叠在一起时，只要内层的<code>Monad</code>实现了外层的接口，就可以不用显示的<code>lift</code>操作。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">ask</span> :: <span class="type">MonadReader</span> r m =&gt; m r</span><br><span class="line"><span class="comment">-- 注意到类型为m，只需实现MonadReader接口</span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">MonadReader</span> r m =&gt; <span class="type">MonadReader</span> r <span class="container">(<span class="type">StateT</span> <span class="title">s</span> <span class="title">m</span>)</span></span><br><span class="line"><span class="comment">-- 可以在StateT中直接使用ask</span></span></span><br></pre></td></tr></table></figure>
+<p>那么<code>IO</code>操作要怎么办？难道我们要一点点<code>lift . lift . lift ...</code>过去吗？由于<code>IO</code>类型没有<code>Transformer</code>，所以Haskell提供了<code>MonadIO</code>类型类，可以直接使用<code>liftIO</code>来提升<code>IO</code>操作。</p>
+<h2 id="自定义的Monad_Transformer？">自定义的Monad Transformer？</h2><p>这个完全可以再单开一篇文章来讲了… 可以参考Real World Haskell第十八章实现的<code>MaybeT</code>。</p>
+<h2 id="Monad_Transformer的顺序？">Monad Transformer的顺序？</h2><p>在有的情况下，<code>Monad Transformer</code>的顺序是无关紧要的，比如上例的两个<code>State Monad</code>。但在有的情况下，交换顺序可能得到完全错误的结果，这要依使用场景而定。例如如果要交换<code>foo</code>中<code>ReaderT</code>和<code>WriterT</code>的顺序的话，使用<code>execWriterT</code>就会抛弃内层的<code>ReaderT Config IO String</code>结果，只留下<code>String</code>类型的日志。</p>
+<p>以上。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2016/01/21/Monad-Transformer/" data-id="cimkp38vd000xnk20ttg1q9hh" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2016/01/21/Monad-Transformer/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Template-template-parameters" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/01/05/Template-template-parameters/" class="article-date">
@@ -108,7 +182,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cimj7f6n7000phs20fy53ki33" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cimkp38v6000pnk20cs5osy3k" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -185,7 +259,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/" data-id="cimj7f6lf0000hs20g70epe7g" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/" data-id="cimkp38tn0000nk20f4tjjyh8" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -284,7 +358,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cimj7f6ni0011hs208wedemuh" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cimkp38vj0011nk20zj11xw7u" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -353,7 +427,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cimj7f6nb000shs20drry5pik" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cimkp38v9000snk20564qmbe9" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/10/06/Monad习作二则/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -537,7 +611,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cimj7f6mz000khs20frq838bu" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cimkp38uz000knk208l9ujqu9" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/09/12/Y-Combinator/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -597,7 +671,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/" data-id="cimj7f6mb0002hs20hklvyfqd" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/" data-id="cimkp38ui0002nk20kudoi023" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -648,7 +722,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/" data-id="cimj7f6mp000chs20ajdwvy6k" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/" data-id="cimkp38ur000cnk20tcso5i0s" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -737,7 +811,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/" data-id="cimj7f6mm0006hs204ytfs66a" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/" data-id="cimkp38up0006nk20f4xs9y7o" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -766,7 +840,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -775,7 +849,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -785,6 +859,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/04/03/Existential-Type/">Existential Type</a>
+          </li>
         
           <li>
             <a href="/2016/03/24/Comments-on-Extensible-Effects/">[Comments on] Extensible Effects</a>
@@ -800,10 +878,6 @@
         
           <li>
             <a href="/2016/02/07/Kata-Lens-Maker/">Kata:Lens-Maker</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/29/Emacs配置流水账/">Emacs配置流水账</a>
           </li>
         
       </ul>
