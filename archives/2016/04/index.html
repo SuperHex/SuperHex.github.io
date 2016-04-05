@@ -102,7 +102,7 @@
         <p>Existential Type是个什么东西呢？简单来说，在Haskell中<code>type</code>,<code>newtype</code>,<code>data</code>关键字右边出现的类型一定要在左边出现。比如：</p>
 <figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="type">Foo</span> a = <span class="type">MkFoo</span> a</span></span><br></pre></td></tr></table></figure>
 <p>Existential Type 就是用来打破这个限制的。打开这个扩展之后，我们可以写出这样的表达式：</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="type">Bar</span> = forall a. <span class="type">MkBar</span> a</span></span><br><span class="line"><span class="comment">--   Bar = exist  a. MkBar a</span></span><br><span class="line"></span><br><span class="line"><span class="title">xs</span> :: [<span class="type">Bar</span>]</span><br><span class="line"><span class="title">xs</span> = [<span class="type">MkBar</span> <span class="number">1</span>, <span class="type">MkBar</span> <span class="string">"abc"</span>, <span class="type">MkBar</span> ()]</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="type">Bar</span> = forall a. <span class="type">MkBar</span> a</span></span><br><span class="line"><span class="comment">--   Bar = MkBar (exist a. a)</span></span><br><span class="line"></span><br><span class="line"><span class="title">xs</span> :: [<span class="type">Bar</span>]</span><br><span class="line"><span class="title">xs</span> = [<span class="type">MkBar</span> <span class="number">1</span>, <span class="type">MkBar</span> <span class="string">"abc"</span>, <span class="type">MkBar</span> ()]</span><br></pre></td></tr></table></figure>
 <p>hmm… 看起来像是一种类型擦除的技巧。使用这种方法可以很简便地实现上面的hetergenous List。<br>不过上面这个实现可是中看不中用，不妨考虑一下当我们想模式匹配<code>Bar</code>时：</p>
 <figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">func</span> (<span class="type">MkBar</span> x) = ???</span><br></pre></td></tr></table></figure>
 <p>我们会发现甚至连其中<code>x</code>的类型信息都不知道。</p>
@@ -110,7 +110,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/04/03/Existential-Type/" data-id="cimm5ywtm0013xe20sozft7wz" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/04/03/Existential-Type/" data-id="cimnhi2ts0013bk20g33rj57t" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/04/03/Existential-Type/#disqus_thread" class="article-comment-link">Comments</a>
       

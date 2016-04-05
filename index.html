@@ -102,7 +102,7 @@
         <p>Existential Type是个什么东西呢？简单来说，在Haskell中<code>type</code>,<code>newtype</code>,<code>data</code>关键字右边出现的类型一定要在左边出现。比如：</p>
 <figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="type">Foo</span> a = <span class="type">MkFoo</span> a</span></span><br></pre></td></tr></table></figure>
 <p>Existential Type 就是用来打破这个限制的。打开这个扩展之后，我们可以写出这样的表达式：</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="type">Bar</span> = forall a. <span class="type">MkBar</span> a</span></span><br><span class="line"><span class="comment">--   Bar = exist  a. MkBar a</span></span><br><span class="line"></span><br><span class="line"><span class="title">xs</span> :: [<span class="type">Bar</span>]</span><br><span class="line"><span class="title">xs</span> = [<span class="type">MkBar</span> <span class="number">1</span>, <span class="type">MkBar</span> <span class="string">"abc"</span>, <span class="type">MkBar</span> ()]</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">data</span> <span class="type">Bar</span> = forall a. <span class="type">MkBar</span> a</span></span><br><span class="line"><span class="comment">--   Bar = MkBar (exist a. a)</span></span><br><span class="line"></span><br><span class="line"><span class="title">xs</span> :: [<span class="type">Bar</span>]</span><br><span class="line"><span class="title">xs</span> = [<span class="type">MkBar</span> <span class="number">1</span>, <span class="type">MkBar</span> <span class="string">"abc"</span>, <span class="type">MkBar</span> ()]</span><br></pre></td></tr></table></figure>
 <p>hmm… 看起来像是一种类型擦除的技巧。使用这种方法可以很简便地实现上面的hetergenous List。<br>不过上面这个实现可是中看不中用，不妨考虑一下当我们想模式匹配<code>Bar</code>时：</p>
 <figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">func</span> (<span class="type">MkBar</span> x) = ???</span><br></pre></td></tr></table></figure>
 <p>我们会发现甚至连其中<code>x</code>的类型信息都不知道。</p>
@@ -110,7 +110,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/04/03/Existential-Type/" data-id="cimm5ywtm0013xe20sozft7wz" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/04/03/Existential-Type/" data-id="cimnhi2ts0013bk20g33rj57t" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/04/03/Existential-Type/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -163,7 +163,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/03/24/Comments-on-Extensible-Effects/" data-id="cimm5ywts001bxe20a6zhiz6k" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/03/24/Comments-on-Extensible-Effects/" data-id="cimnhi2u1001bbk205rqoclyi" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/03/24/Comments-on-Extensible-Effects/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -380,7 +380,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/02/14/行程备忘/" data-id="cimm5ywsq0005xe20hy1ws4sj" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/02/14/行程备忘/" data-id="cimnhi2ss0005bk20zspnmrk5" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/02/14/行程备忘/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -434,7 +434,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/02/09/excited/" data-id="cimm5ywsx000fxe207pptkjqo" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/02/09/excited/" data-id="cimnhi2t2000fbk20g8tr8k16" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/02/09/excited/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -486,7 +486,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/" data-id="cimm5ywti000zxe20txr0mplg" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/" data-id="cimnhi2to000zbk2002wxivbu" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/02/07/Kata-Lens-Maker/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -570,7 +570,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cimm5ywto0015xe205fo61ayw" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cimnhi2tw0015bk203f2zk9tf" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/29/Emacs配置流水账/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -641,7 +641,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cimm5ywt0000ixe2087ax4b8z" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/27/coroutine/" data-id="cimnhi2t4000ibk20l6unv674" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/27/coroutine/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -700,7 +700,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cimm5ywtq0019xe20d3rx6rw3" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/24/Continuation-Monad/" data-id="cimnhi2tz0019bk20y3mkvq4b" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/24/Continuation-Monad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -751,7 +751,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cimm5ywt7000nxe20mtqrwwon" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/22/Type-family快速教程/" data-id="cimnhi2ta000nbk20n7h48c9b" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/22/Type-family快速教程/#disqus_thread" class="article-comment-link">Comments</a>
       
