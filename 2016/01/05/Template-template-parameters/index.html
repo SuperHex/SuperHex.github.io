@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Template-template parameters | 妄想神社</title>
+  <title>Template-template parameters | Phantom Shrine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！
 123456789101112131415161718192021222324252627282930313233template &amp;lt;template &amp;lt;typename&amp;gt; class m&amp;gt;struct Monad &amp;#123;    tem">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Template-template parameters">
 <meta property="og:url" content="http://superhex.github.io/2016/01/05/Template-template-parameters/index.html">
-<meta property="og:site_name" content="妄想神社">
+<meta property="og:site_name" content="Phantom Shrine">
 <meta property="og:description" content="虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！
 123456789101112131415161718192021222324252627282930313233template &amp;lt;template &amp;lt;typename&amp;gt; class m&amp;gt;struct Monad &amp;#123;    tem">
 <meta property="og:updated_time" content="2016-01-05T14:39:46.000Z">
@@ -19,13 +19,13 @@
 <meta name="twitter:description" content="虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！
 123456789101112131415161718192021222324252627282930313233template &amp;lt;template &amp;lt;typename&amp;gt; class m&amp;gt;struct Monad &amp;#123;    tem">
   
-    <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="Phantom Shrine" type="application/atom+xml">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <script type="text/javascript">
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -47,11 +47,11 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">妄想神社</a>
+        <a href="/" id="logo">Phantom Shrine</a>
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">学院派的Haskell信徒 ｜ 人生苦短，我用Python ｜ 脑洞一时爽，填坑修罗场</a>
+          <a href="/" id="subtitle">Haskell, Programming Languages, Hardware, and Happy Hacking!</a>
         </h2>
       
     </div>
@@ -63,7 +63,9 @@
         
           <a class="main-nav-link" href="/archives">Archives</a>
         
-          <a class="main-nav-link" href="/about">关于</a>
+          <a class="main-nav-link" href="/about">About</a>
+        
+          <a class="main-nav-link" href="/readings">Readings</a>
         
       </nav>
       <nav id="sub-nav">
@@ -102,7 +104,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">template</span> &lt;<span class="keyword">typename</span>&gt; <span class="keyword">class</span> m&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;b&gt; mbind(<span class="keyword">const</span> m&lt;a&gt;&amp;, m&lt;b&gt;(*)(<span class="keyword">const</span> a&amp;));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line"><span class="keyword">struct</span> Maybe &#123;</span><br><span class="line">    <span class="keyword">bool</span> isNothing;</span><br><span class="line">    a value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad&lt;Maybe&gt; &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp; v) &#123;</span><br><span class="line">        Maybe&lt;a&gt; x;</span><br><span class="line">        x.isNothing = <span class="literal">false</span>;</span><br><span class="line">        x.value = v;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;b&gt; mbind(<span class="keyword">const</span> Maybe&lt;a&gt;&amp; action, Maybe&lt;b&gt;(*function)(<span class="keyword">const</span> a&amp;)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (action.isNothing)</span><br><span class="line">            <span class="keyword">return</span> action;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> function(action.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">template</span> &lt;<span class="keyword">typename</span>&gt; <span class="keyword">class</span> m&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;b&gt; mbind(<span class="keyword">const</span> m&lt;a&gt;&amp;, m&lt;b&gt;(*)(const a&amp;));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line"><span class="keyword">struct</span> Maybe &#123;</span><br><span class="line">    <span class="keyword">bool</span> isNothing;</span><br><span class="line">    a value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad&lt;Maybe&gt; &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp; v) &#123;</span><br><span class="line">        Maybe&lt;a&gt; x;</span><br><span class="line">        x.isNothing = <span class="literal">false</span>;</span><br><span class="line">        x.value = v;</span><br><span class="line">        return x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;b&gt; mbind(<span class="keyword">const</span> Maybe&lt;a&gt;&amp; action, Maybe&lt;b&gt;(*function)(const a&amp;)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (action.isNothing)</span><br><span class="line">            return action;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            return function(action.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>相关链接：</p>
 <p><a href="http://stackoverflow.com/questions/2565097/higher-kinded-types-with-c" target="_blank" rel="external">Higher-kinded Types with C++</a></p>
 <p><a href="http://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters-in-c" target="_blank" rel="external">What are some uses of template template parameters in C++?</a></p>
@@ -110,7 +112,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cio8quvtc000pol20pnlx7lmo" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cio9rz3t1000ffh20igk861ow" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -159,7 +161,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -168,7 +170,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -178,6 +180,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/05/16/Reading-Note-The-Implementation-of-Functional-Programming-Languages/">Reading Note: The Implementation of Functional Programming Languages</a>
+          </li>
         
           <li>
             <a href="/2016/02/14/行程备忘/">行程备忘</a>
@@ -193,10 +199,6 @@
         
           <li>
             <a href="/2016/01/29/Emacs配置流水账/">Emacs配置流水账</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/27/coroutine/">使用Continuation Monad实现Coroutine</a>
           </li>
         
       </ul>
@@ -223,7 +225,9 @@
   
     <a href="/archives" class="mobile-nav-link">Archives</a>
   
-    <a href="/about" class="mobile-nav-link">关于</a>
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+    <a href="/readings" class="mobile-nav-link">Readings</a>
   
 </nav>
     
@@ -245,11 +249,11 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
   </div>
 </body>
 </html>

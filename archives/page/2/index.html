@@ -3,25 +3,25 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives | 妄想神社</title>
+  <title>Archives | Phantom Shrine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description">
 <meta property="og:type" content="website">
-<meta property="og:title" content="妄想神社">
+<meta property="og:title" content="Phantom Shrine">
 <meta property="og:url" content="http://superhex.github.io/archives/page/2/index.html">
-<meta property="og:site_name" content="妄想神社">
+<meta property="og:site_name" content="Phantom Shrine">
 <meta property="og:description">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="妄想神社">
+<meta name="twitter:title" content="Phantom Shrine">
 <meta name="twitter:description">
   
-    <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="Phantom Shrine" type="application/atom+xml">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <script type="text/javascript">
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -43,11 +43,11 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">妄想神社</a>
+        <a href="/" id="logo">Phantom Shrine</a>
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">学院派的Haskell信徒 ｜ 人生苦短，我用Python ｜ 脑洞一时爽，填坑修罗场</a>
+          <a href="/" id="subtitle">Haskell, Programming Languages, Hardware, and Happy Hacking!</a>
         </h2>
       
     </div>
@@ -59,7 +59,9 @@
         
           <a class="main-nav-link" href="/archives">Archives</a>
         
-          <a class="main-nav-link" href="/about">关于</a>
+          <a class="main-nav-link" href="/about">About</a>
+        
+          <a class="main-nav-link" href="/readings">Readings</a>
         
       </nav>
       <nav id="sub-nav">
@@ -76,6 +78,51 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-Template-template-parameters" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/05/Template-template-parameters/" class="article-date">
+  <time datetime="2016-01-05T14:28:27.000Z" itemprop="datePublished">1月 5 2016</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/05/Template-template-parameters/">Template-template parameters</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">template</span> &lt;<span class="keyword">typename</span>&gt; <span class="keyword">class</span> m&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;b&gt; mbind(<span class="keyword">const</span> m&lt;a&gt;&amp;, m&lt;b&gt;(*)(const a&amp;));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line"><span class="keyword">struct</span> Maybe &#123;</span><br><span class="line">    <span class="keyword">bool</span> isNothing;</span><br><span class="line">    a value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad&lt;Maybe&gt; &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp; v) &#123;</span><br><span class="line">        Maybe&lt;a&gt; x;</span><br><span class="line">        x.isNothing = <span class="literal">false</span>;</span><br><span class="line">        x.value = v;</span><br><span class="line">        return x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;b&gt; mbind(<span class="keyword">const</span> Maybe&lt;a&gt;&amp; action, Maybe&lt;b&gt;(*function)(const a&amp;)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (action.isNothing)</span><br><span class="line">            return action;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            return function(action.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>相关链接：</p>
+<p><a href="http://stackoverflow.com/questions/2565097/higher-kinded-types-with-c" target="_blank" rel="external">Higher-kinded Types with C++</a></p>
+<p><a href="http://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters-in-c" target="_blank" rel="external">What are some uses of template template parameters in C++?</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cio9rz3t1000ffh20igk861ow" class="article-share-link">Share</a>
+      
+        <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C++</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-2015什么的，就这么过完了呢" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -109,7 +156,7 @@
 <p>要说起来果然还是在这个学期觉醒了呢，果然还是因为那个家伙走掉了所以能够稍微静下心来吗。一学期下来大概啃了7、8篇FP的论文，感觉功力大增。所以说果然，遇到不懂的概念就去找原始论文，比那些稀奇古怪的tutorial不知道高到哪里去了！话说之后好像一直就跑偏了的样子，一直泡在<a href="dev.stephendiehl.com/hask">Stephen Diehl</a>的博客来着，虽然确实让我开了眼界。</p>
 <p>然后就差不多到了现在了…，前一阵子肝完了GEB这部神作，刚刚又入手了《Concrete Mathematics》这本冷笑话集（误），也是非常推荐。</p>
 <p>那么，其实也就是这样了。也是一如既往懒洋洋的具有博丽精神的一年呢。现在想想也很是苦恼呢，自己这种没本事GPA又不高的家伙，怎么可能出的国啊（叹）。不过既然是新年，那么也就装模作样地设定一下新年的目标好了！</p>
-<h4 id="2016_TODO_List:">2016 TODO List:</h4><hr>
+<h4 id="2016-TODO-List"><a href="#2016-TODO-List" class="headerlink" title="2016 TODO List:"></a>2016 TODO List:</h4><hr>
 <ul>
 <li><em>GitHub 100天连击！</em><br>  目前比较想做的事情大概有：<ul>
 <li>重写遗留的飞控，找机会飞起来啊啊啊！</li>
@@ -140,7 +187,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/" data-id="cio8quvrv0000ol20d5y3jd35" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/" data-id="cio9rz3s70000fh20j3q2fy6q" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/12/31/2015什么的，就这么过完了呢/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -179,20 +226,20 @@
 <p>注：本文会夹杂大量私货，同时会补充原文中不易理解的地方，如有错误还请指正。</p>
 <p>那么，在开始之前，先放上目录吧。</p>
 <hr>
-<h4 id="Chapter_1_(引言)">Chapter 1 (引言)</h4><ul>
+<h4 id="Chapter-1-引言"><a href="#Chapter-1-引言" class="headerlink" title="Chapter 1 (引言)"></a>Chapter 1 (引言)</h4><ul>
 <li>设置</li>
 <li>基本语言</li>
 <li>LLVM 介绍</li>
 <li>完整源码</li>
 </ul>
-<h4 id="Chapter_2_(语法分析(Parser)和抽象语法树(AST))">Chapter 2 (语法分析(Parser)和抽象语法树(AST))</h4><ul>
+<h4 id="Chapter-2-语法分析-Parser-和抽象语法树-AST"><a href="#Chapter-2-语法分析-Parser-和抽象语法树-AST" class="headerlink" title="Chapter 2 (语法分析(Parser)和抽象语法树(AST))"></a>Chapter 2 (语法分析(Parser)和抽象语法树(AST))</h4><ul>
 <li>Parser组合子(Parser Combinator)</li>
 <li>词法分析器(Lexer)</li>
 <li>语法分析器(Parser)</li>
 <li>REPL</li>
 <li>完整源码</li>
 </ul>
-<h4 id="Chapter_3_(代码生成)">Chapter 3 (代码生成)</h4><ul>
+<h4 id="Chapter-3-代码生成"><a href="#Chapter-3-代码生成" class="headerlink" title="Chapter 3 (代码生成)"></a>Chapter 3 (代码生成)</h4><ul>
 <li>Haskell LLVM绑定</li>
 <li>代码生成设置</li>
 <li>代码块(Blocks)</li>
@@ -200,7 +247,7 @@
 <li>从抽象语法树到中间语言(IR)</li>
 <li>完整源码</li>
 </ul>
-<h4 id="Chapter_4_(JIT_和优化器支持)">Chapter 4 (JIT 和优化器支持)</h4><ul>
+<h4 id="Chapter-4-JIT-和优化器支持"><a href="#Chapter-4-JIT-和优化器支持" class="headerlink" title="Chapter 4 (JIT 和优化器支持)"></a>Chapter 4 (JIT 和优化器支持)</h4><ul>
 <li>抽象语法树和模块(Modules)</li>
 <li>常量折叠(Constant Folding)</li>
 <li>Optimization Passes(优化阶段？)</li>
@@ -208,29 +255,29 @@
 <li>外部函数</li>
 <li>完整源码</li>
 </ul>
-<h4 id="Chapter_5_(控制流)">Chapter 5 (控制流)</h4><ul>
+<h4 id="Chapter-5-控制流"><a href="#Chapter-5-控制流" class="headerlink" title="Chapter 5 (控制流)"></a>Chapter 5 (控制流)</h4><ul>
 <li>“if”表达式</li>
 <li>“for”循环表达式</li>
 <li>完整源码</li>
 </ul>
-<h4 id="Chapter_6_(运算符)">Chapter 6 (运算符)</h4><ul>
+<h4 id="Chapter-6-运算符"><a href="#Chapter-6-运算符" class="headerlink" title="Chapter 6 (运算符)"></a>Chapter 6 (运算符)</h4><ul>
 <li>用户定义的运算符</li>
 <li>二元运算符</li>
 <li>一元运算符</li>
 <li>Kicking the Tires  &lt;- 这个太不好翻译了（逃</li>
 <li>完整源码</li>
 </ul>
-<h4 id="Chapter_7_(变量)">Chapter 7 (变量)</h4><ul>
+<h4 id="Chapter-7-变量"><a href="#Chapter-7-变量" class="headerlink" title="Chapter 7 (变量)"></a>Chapter 7 (变量)</h4><ul>
 <li>为什么这是一个困难的问题</li>
 <li>LLVM中的内存</li>
 <li>变量</li>
 <li>赋值</li>
 <li>完整源码</li>
 </ul>
-<h4 id="Chapter_8_(结语)">Chapter 8 (结语)</h4><ul>
+<h4 id="Chapter-8-结语"><a href="#Chapter-8-结语" class="headerlink" title="Chapter 8 (结语)"></a>Chapter 8 (结语)</h4><ul>
 <li>教程总结</li>
 </ul>
-<h4 id="Chapter_9_(附录)">Chapter 9 (附录)</h4><ul>
+<h4 id="Chapter-9-附录"><a href="#Chapter-9-附录" class="headerlink" title="Chapter 9 (附录)"></a>Chapter 9 (附录)</h4><ul>
 <li>命令行工具</li>
 </ul>
 <p>如果有时间的话大概会实现一些扩展功能，到时候再加上吧。</p>
@@ -239,7 +286,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cio8quvto0011ol20llzjhl38" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cio9rz3sm0005fh207ol9xbel" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -284,10 +331,10 @@
 <p>Monad不过是自函子范畴上的幺半群而已，不懂的都是⑨！</p>
 </blockquote>
 <p>之类的老梗啦ww 毕竟有关Monad的教程实在是太多了，所以这里吾辈只是简单谈谈对于Monad的理解。</p>
-<h3 id="TL;DR">TL;DR</h3><p><strong>Monad就是可编程的分号。</strong></p>
+<h3 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h3><p><strong>Monad就是可编程的分号。</strong></p>
 <p>对于新手而言对这句话肯定是一头雾水吧ww 其实配合例子来看非常简单。</p>
 <p>那么现在假设我们要做一个数字电子线路的仿真系统。让我们要求高一点，这个系统要有<em>时延</em>。于是我们可以用这么个类型来表达这些信息：</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="typedef"><span class="keyword">newtype</span>  <span class="type">Signal</span> a = <span class="type">Signal</span> <span class="container">&#123; <span class="title">time</span> :: <span class="type">Int</span>, <span class="title">value</span> :: <span class="title">a</span> &#125;</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">newtype</span>  <span class="type">Signal</span> a = <span class="type">Signal</span> &#123; <span class="title">time</span> :: <span class="type">Int</span>, <span class="title">value</span> :: <span class="title">a</span> &#125;</span></span><br></pre></td></tr></table></figure>
 <p>非常简单，对吧？这个类型实际上就可以看作附加了时间上下文（<code>time :: Int</code>）的值。</p>
 <p>有了基本的表示类型，下面我们来表示一些基本元件。假设我们的需求很简单，只需要非门就够了：</p>
 <figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">notGate</span> :: a -&gt; <span class="type">Signal</span> a</span><br><span class="line"><span class="title">notGate</span> something = <span class="type">Signal</span> &#123; time = <span class="number">1</span>, value = not something &#125;</span><br></pre></td></tr></table></figure>
@@ -301,14 +348,14 @@
 <p>你看，<code>Monad</code>不过也就是这么个小儿科的东西。它只不过是一种保持你所定义的类型所附带的额外信息的结构罢了。现在再回想一下前面那句“Monad就是可编程的分号”是不是感觉明白了很多呢。</p>
 <p>P.S. 关于为什么只实现了非门，其实是由于这种模拟方法处理时间有一点麻烦… 例如与门，就需要处理时间同步的问题。这里就不涉及了。</p>
 <p>下面放上最初的两个习作，也正是实现了这两种<code>Monad</code>吾辈才感觉差不多理解了<code>Monad</code>。下一步就要去研究<code>Monad Transformer</code>了，是个更大更深的坑呢。</p>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Monad implemented here.</span></span><br><span class="line"><span class="comment">-- beacuse since GHC 7.10 there must be</span></span><br><span class="line"><span class="comment">-- Functor =&gt; Applicative =&gt; Monad</span></span><br><span class="line"><span class="comment">-- so we have to build it from scratch</span></span><br><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">M</span> a = <span class="type">M</span> <span class="container">&#123; <span class="title">time</span> :: <span class="type">Int</span>, <span class="title">value</span> :: <span class="title">a</span> &#125;</span> </span></span><br><span class="line">            <span class="keyword">deriving</span> (<span class="type">Show</span>, <span class="type">Eq</span>)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Functor</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    f `fmap` a = a &#123; value = f (value a) &#125;</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    pure = <span class="type">M</span> <span class="number">0</span></span><br><span class="line">    (<span class="type">M</span> t f) &lt;*&gt; s = fmap f (s &#123; time = time s + t&#125; )</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    return = pure</span><br><span class="line">    (<span class="type">M</span> t s) &gt;&gt;= f = <span class="keyword">let</span> r = f s</span><br><span class="line">                    <span class="keyword">in</span> r &#123; time = time r + t&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">-- A more complicated one</span></span><br><span class="line"><span class="typedef"><span class="keyword">newtype</span> <span class="type">T</span> a = <span class="type">T</span> <span class="container">&#123; <span class="title">runT</span> :: <span class="type">Int</span> -&gt; <span class="title">a</span> &#125;</span></span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    return a = <span class="type">T</span> $ const a</span><br><span class="line">    x &gt;&gt;= f = <span class="type">T</span> $ \t -&gt; runT (f (runT x t)) t</span><br><span class="line">    <span class="comment">-- x :: (Int -&gt; a)</span></span><br><span class="line">    <span class="comment">-- f :: a -&gt; (Int -&gt; a)</span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    pure = return</span><br><span class="line">    (<span class="type">T</span> f) &lt;*&gt; x = <span class="type">T</span> $ \t -&gt; f t (runT x t)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Functor</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    f `fmap` a = <span class="type">T</span> $ \t -&gt; f (runT a t)</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Monad implemented here.</span></span><br><span class="line"><span class="comment">-- beacuse since GHC 7.10 there must be</span></span><br><span class="line"><span class="comment">-- Functor =&gt; Applicative =&gt; Monad</span></span><br><span class="line"><span class="comment">-- so we have to build it from scratch</span></span><br><span class="line"><span class="class"><span class="keyword">newtype</span> <span class="type">M</span> a = <span class="type">M</span> &#123; <span class="title">time</span> :: <span class="type">Int</span>, <span class="title">value</span> :: <span class="title">a</span> &#125; </span></span><br><span class="line">            <span class="keyword">deriving</span> (<span class="type">Show</span>, <span class="type">Eq</span>)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Functor</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    f `fmap` a = a &#123; value = f (value a) &#125;</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    pure = <span class="type">M</span> <span class="number">0</span></span><br><span class="line">    (<span class="type">M</span> t f) &lt;*&gt; s = fmap f (s &#123; time = time s + t&#125; )</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">M</span> <span class="keyword">where</span></span></span><br><span class="line">    return = pure</span><br><span class="line">    (<span class="type">M</span> t s) &gt;&gt;= f = <span class="keyword">let</span> r = f s</span><br><span class="line">                    <span class="keyword">in</span> r &#123; time = time r + t&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">-- A more complicated one</span></span><br><span class="line"><span class="class"><span class="keyword">newtype</span> <span class="type">T</span> a = <span class="type">T</span> &#123; <span class="title">runT</span> :: <span class="type">Int</span> -&gt; <span class="title">a</span> &#125;</span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Monad</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    return a = <span class="type">T</span> $ const a</span><br><span class="line">    x &gt;&gt;= f = <span class="type">T</span> $ \t -&gt; runT (f (runT x t)) t</span><br><span class="line">    <span class="comment">-- x :: (Int -&gt; a)</span></span><br><span class="line">    <span class="comment">-- f :: a -&gt; (Int -&gt; a)</span></span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Applicative</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    pure = return</span><br><span class="line">    (<span class="type">T</span> f) &lt;*&gt; x = <span class="type">T</span> $ \t -&gt; f t (runT x t)</span><br><span class="line"><span class="class"></span><br><span class="line"><span class="keyword">instance</span> <span class="type">Functor</span> <span class="type">T</span> <span class="keyword">where</span></span></span><br><span class="line">    f `fmap` a = <span class="type">T</span> $ \t -&gt; f (runT a t)</span><br></pre></td></tr></table></figure>
 <p>关于为什么第二个实现是倒序的… 螃蟹卡农。嗯。</p>
 <p>今天的幻想乡也很和平呢。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cio8quvtf000sol200ba00oyi" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2015/10/06/Monad习作二则/" data-id="cio9rz3sz000dfh20hl0z3e10" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2015/10/06/Monad习作二则/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -361,7 +408,7 @@
 <li>函数式编程中，函数调用的形式是 <em>(f x y)</em> 而不是 <em>f(x y)</em></li>
 <li>符号”:=”代表”等于”的意思</li>
 </ul>
-<h2 id="Lambda_演算">Lambda 演算</h2><hr>
+<h2 id="Lambda-演算"><a href="#Lambda-演算" class="headerlink" title="Lambda 演算"></a>Lambda 演算</h2><hr>
 <p>Lambda演算（或λ－演算）是在1930年被Alonzo Church作为一种表达计算的形式系统（formal system for expressing computation）发明的。尽管其中有“微积分”一词（calculus），它却与牛顿和莱布尼兹发明的微积分相差很远。事实上，它在计算机领域的应用要比数学上要多，就我们大多数人所知。</p>
 <p>有效的Lambda表达式可以用归纳法如下定义：<br><a name="rule1"></a></p>
 <ol>
@@ -394,13 +441,13 @@
 <p>λx. x<br>λy. y<br>λz. z<br>λ☃. ☃</p>
 </blockquote>
 <p>这将带领我们来到对 <strong>约束变量</strong> 和 <strong>自由变量</strong> 的讨论。</p>
-<h2 id="##约束变量_vs-_自由变量">##约束变量 vs. 自由变量</h2><p>一个<strong>约束</strong>变量是在<em>λ</em> 的表达式中出现的变量并与参数具有相同的名字。一个<strong>自由</strong>变量是一个不是约束变量的变量。</p>
+<h2 id="约束变量-vs-自由变量"><a href="#约束变量-vs-自由变量" class="headerlink" title="##约束变量 vs. 自由变量"></a>##约束变量 vs. 自由变量</h2><p>一个<strong>约束</strong>变量是在<em>λ</em> 的表达式中出现的变量并与参数具有相同的名字。一个<strong>自由</strong>变量是一个不是约束变量的变量。</p>
 <p>举个例子，<em>x</em> 在 <em>λx. x</em> 中是一个约束变量，在 <em>(λy.y)x</em> 中是自由变量（传入参数）。</p>
 <p>关于约束变量比较特殊的一点是你可以任意的重命名他们，只要对所有的变量应用就没问题。如果两个λ表达式在经过重命名后是一样的，那么就称他们是 <strong>α相等（α-equivalent）</strong>。</p>
 <p>来看一个实际的例子：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m = -&gt;(horrible_variable_name) &#123; horrible_variable_name * y &#125;</span><br></pre></td></tr></table></figure></p>
 <p>在这个例子中，把<code>horrible_variable_name</code>（约束变量）重命名是很安全的（例如x）：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m = -&gt;(x) &#123; x * y &#125;</span><br></pre></td></tr></table></figure></p>
 <p>注意，你不能去重命名<em>y</em>，因为它是在区域外被定义的。或许<em>y</em>被定义为数字<code>2</code>，并且<code>m</code>是一个函数将自己的输入乘以<code>2</code>。如果我们直接讲<em>y</em>重命名为<em>z</em>（让我们假设它被定义为<code>0</code>），m将会变成一个永远返回<code>0</code>的函数呢。</p>
-<h2 id="##函数应用">##函数应用</h2><p>太酷了，我们有了函数！但是它的参数是什么呢？这时野生的规则3就跳出来了！</p>
+<h2 id="函数应用"><a href="#函数应用" class="headerlink" title="##函数应用"></a>##函数应用</h2><p>太酷了，我们有了函数！但是它的参数是什么呢？这时野生的规则3就跳出来了！</p>
 <blockquote>
 <p>如果 <strong>t</strong> 和 <strong>s</strong> 都是有效的Lambda表达式，那么 <strong>t s</strong> 是一个有效的Lambda表达式</p>
 </blockquote>
@@ -451,7 +498,7 @@
 <p>如果这引起了你的好奇心，那么我推荐你读一下Douglas Hofstadter的 <em>Gödel, Escher, Bach</em>（译注：中文名似乎叫 <em>GEB:集异璧之大成</em> 传说中原作者参与翻译的中译本，不可多得的奇书）。到目前为止我只读了一半，感觉就像在埃舍尔的迷宫中漫游一样。相信我，迷失在其中是值得的，但是我好像跑题了（笑。</p>
 <p><img src="https://d262ilb51hltx0.cloudfront.net/max/995/1*qoIjQtBaEhxT2RgjWWD6fg.jpeg" alt="Escher&#39;s labyrinth"></p>
 <p>那么，我们是如何在不采用自我引用的情况下达到自我引用呢？我想是时候回顾一下我们的神秘朋友，Y不动点组合子了。</p>
-<h2 id="##终焉，Y_Combinator">##终焉，Y Combinator</h2><p>来回顾一下我们的老朋友：</p>
+<h2 id="终焉，Y-Combinator"><a href="#终焉，Y-Combinator" class="headerlink" title="##终焉，Y Combinator"></a>##终焉，Y Combinator</h2><p>来回顾一下我们的老朋友：</p>
 <blockquote>
 <p>λf. (λx. f (x x))(λx. f (x x))</p>
 </blockquote>
@@ -471,7 +518,7 @@
 <p>顺着这个想法，如果我们找到一个<em>F</em>的不动点<em>p</em>使得<em>Fp</em>等于<em>p</em>，我们就可以用<em>Fp</em>或者<em>p</em>（它们是同一种东西）作为那个没有直接自我引用的“递归函数”。</p>
 <p>显然对于任意的λ表达式<em>f</em>，<em>(λx. f (x x))(λx. f (x x))</em>是它的一个不动点。</p>
 <p>让我们看看这是怎么一回事。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X = (&#955;x. f (x x))(&#955;x. f (x x))&#10;X = f (x x) [x := &#955;x. f (x x)]&#10;X = f ((&#955;x. f (x x)) (&#955;x. f (x x)))&#10;X = f X</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">X = (λx. f (x x))(λx. f (x x))</span><br><span class="line">X = f (x x) [x := λx. f (x x)]</span><br><span class="line">X = f ((λx. f (x x)) (λx. f (x x)))</span><br><span class="line">X = f X</span><br></pre></td></tr></table></figure>
 <p>你可以看到，对于任意的函数<em>f</em>，输入<em>X</em>保持不变。</p>
 <p>得知了这一点，我们就可以构造一个函数，其参数为一个函数<em>f</em>并返回它的不动点：</p>
 <blockquote>
@@ -492,7 +539,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cio8quvt7000kol20lwx0ftdl" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cio9rz3ta000nfh206tm4dga5" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/09/12/Y-Combinator/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -529,7 +576,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>长期不定时更新。</p>
-<h2 id="1-Multiple_Defination问题">1.Multiple Defination问题</h2><p>问题表现: 编译失败，提示函数多重定义却又不给出首次定义地点。</p>
+<h2 id="1-Multiple-Defination问题"><a href="#1-Multiple-Defination问题" class="headerlink" title="1.Multiple Defination问题"></a>1.Multiple Defination问题</h2><p>问题表现: 编译失败，提示函数多重定义却又不给出首次定义地点。</p>
 <p>错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Error</span> <span class="type">Compiling</span></span><br><span class="line"><span class="type">Control</span>.cpp:<span class="number">53</span>: multiple definition <span class="keyword">of</span> `<span class="type">TrueControl</span>(double, double, double)'</span><br><span class="line"><span class="type">Control</span>.cpp.o:<span class="type">Control</span>.cpp:<span class="number">53</span>: first defined here</span><br></pre></td></tr></table></figure></p>
 <p>错误原因: 猜测编译器会忽略后缀为<code>.cpp</code>文件中的<code>#ifndef</code>？总之还是老老实实写一个<code>.h</code>和一个<code>.cpp</code>准没错。</p>
 <p>解决办法: </p>
@@ -537,12 +584,12 @@
 <li>将出错文件名后缀改为<code>.h</code>即可。(&lt;-不规范)</li>
 <li>将函数定义单独放到<code>.h</code>文件中并使用<code>#ifndef ... #define... #endif</code>(&lt;-规范，未测试)</li>
 </ul>
-<h2 id="2-Uploading问题">2.Uploading问题</h2><p>问题表现: 成功编译，但上传失败。</p>
+<h2 id="2-Uploading问题"><a href="#2-Uploading问题" class="headerlink" title="2.Uploading问题"></a>2.Uploading问题</h2><p>问题表现: 成功编译，但上传失败。</p>
 <p>错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Problem</span> <span class="type">Uploading</span> to board</span><br><span class="line"><span class="title">avrdude</span>: stk500_recv(): programmer is not responding</span><br><span class="line"></span><br><span class="line"><span class="comment">-- or</span></span><br><span class="line"></span><br><span class="line"><span class="type">Clock</span> not synchronize</span><br></pre></td></tr></table></figure></p>
 <p>错误原因: 常见于Arduino mini等没有直接USB接口的设备。原因为设备没有引出时钟线导致时钟不同步。</p>
 <p>解决办法: 上传的一瞬间按下<code>Reset</code>按键即可，也可以按住在上传的一瞬间松开。</p>
-<h2 id="3-Double_Include问题">3.Double Include问题</h2><p>问题表现: 不定。</p>
-<p>常见错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">'<span class="type">XXX'</span> was not declared <span class="keyword">in</span> this scope</span><br><span class="line"></span><br><span class="line"><span class="comment">-- or</span></span><br><span class="line"></span><br><span class="line">'<span class="type">XXX'</span> does not name a <span class="typedef"><span class="keyword">type</span></span></span><br></pre></td></tr></table></figure></p>
+<h2 id="3-Double-Include问题"><a href="#3-Double-Include问题" class="headerlink" title="3.Double Include问题"></a>3.Double Include问题</h2><p>问题表现: 不定。</p>
+<p>常见错误提示:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">'<span class="type">XXX'</span> was not declared <span class="keyword">in</span> this scope</span><br><span class="line"></span><br><span class="line"><span class="comment">-- or</span></span><br><span class="line"></span><br><span class="line">'<span class="type">XXX'</span> does not name a <span class="class"><span class="keyword">type</span></span></span><br></pre></td></tr></table></figure></p>
 <p>错误原因: 你以为Include了，实际上并没有。</p>
 <p>解决办法: 将所有需要的头文件在<code>.ino</code>文件头再次<code>#include</code>一次。当然不要忘记在头文件里加入<code>#ifndef</code>。</p>
 <p>解释&amp;吐槽: 这个问题简直坑死爹了好吗！翻了好久才在Arduino论坛上找到。老外的解释是:<br><cite><br>Arduino的编译器会将当前文件夹下用得到的文件拷贝到一个临时目录中进行编译（这也是为什么Arduino会要求将文件移到文件夹中），而编译器只会将.ino文件中包含的文件视作需要编译的文件（绕口令）。所以会无视包含中的包含。<br></cite><br>也就是说，如果你有一个这样的包含关系:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">| <span class="type">Arduino</span>.ino</span><br><span class="line">    | library.h</span><br><span class="line">        | sublibrary.h</span><br><span class="line">        | math.h</span><br><span class="line">    |lib.h</span><br></pre></td></tr></table></figure></p>
@@ -552,7 +599,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/" data-id="cio8quvsr0002ol20lnijjb2m" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/" data-id="cio9rz3tr000xfh20w74ga2j9" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/09/04/记Arduino中的一些坑/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -603,7 +650,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/" data-id="cio8quvt0000col20jfpyl0e8" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/" data-id="cio9rz3td000pfh20ajhfn5ml" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/08/26/使用IPV6隧道科学上网/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -692,7 +739,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/" data-id="cio8quvsy0006ol204kygz08x" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/" data-id="cio9rz3tm000ufh20almdi2xg" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/08/19/四轴飞行器完全指南0x01/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -721,7 +768,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -730,7 +777,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -740,6 +787,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/05/16/Reading-Note-The-Implementation-of-Functional-Programming-Languages/">Reading Note: The Implementation of Functional Programming Languages</a>
+          </li>
         
           <li>
             <a href="/2016/02/14/行程备忘/">行程备忘</a>
@@ -755,10 +806,6 @@
         
           <li>
             <a href="/2016/01/29/Emacs配置流水账/">Emacs配置流水账</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/27/coroutine/">使用Continuation Monad实现Coroutine</a>
           </li>
         
       </ul>
@@ -785,7 +832,9 @@
   
     <a href="/archives" class="mobile-nav-link">Archives</a>
   
-    <a href="/about" class="mobile-nav-link">关于</a>
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+    <a href="/readings" class="mobile-nav-link">Readings</a>
   
 </nav>
     
@@ -805,11 +854,11 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
   </div>
 </body>
 </html>

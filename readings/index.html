@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2015/11 | Phantom Shrine</title>
+  <title>Phantom Shrine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
+  <meta name="description" content="Readings">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Phantom Shrine">
-<meta property="og:url" content="http://superhex.github.io/archives/2015/11/index.html">
+<meta property="og:url" content="http://superhex.github.io/readings/index.html">
 <meta property="og:site_name" content="Phantom Shrine">
-<meta property="og:description">
+<meta property="og:description" content="Readings">
+<meta property="og:updated_time" content="2016-05-16T10:13:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Phantom Shrine">
-<meta name="twitter:description">
+<meta name="twitter:description" content="Readings">
   
     <link rel="alternative" href="/atom.xml" title="Phantom Shrine" type="application/atom+xml">
   
@@ -77,110 +78,40 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-Implementing-a-JIT-compiled-Language" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2015/11/01/Implementing-a-JIT-compiled-Language/" class="article-date">
-  <time datetime="2015-11-01T14:02:38.000Z" itemprop="datePublished">11月 1 2015</time>
+    <a href="/readings/index.html" class="article-date">
+  <time datetime="2016-05-16T10:13:39.000Z" itemprop="datePublished">5月 16 2016</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/01/Implementing-a-JIT-compiled-Language/">使用Haskell和LLVM实现JIT编译的语言 0x00</a>
-    </h1>
-  
-
-      </header>
-    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>这篇文章翻译自<a href="http://www.stephendiehl.com/llvm/" target="_blank" rel="external">Stephen Diehl的Blog</a>，鉴于原文的长度，这将会是个天坑。</p>
-<p>那么，为什么要翻译这篇文章呢？主要还是由于Stephen Diehl大神的文章实在是让人大开眼界（特别是<a href="http://dev.stephendiehl.com/hask/" target="_blank" rel="external">这篇</a>，当初看过LYAH之后就该直接来刷这个的，简直跟翻开一本黑魔法书一样）。并且，这篇blog的深度正好适合“入门”之后的中级Haskeller。这个项目从头到尾自己敲一遍基本上Haskell的种种特性就熟悉了（笑）。</p>
-<p>注：本文会夹杂大量私货，同时会补充原文中不易理解的地方，如有错误还请指正。</p>
-<p>那么，在开始之前，先放上目录吧。</p>
-<hr>
-<h4 id="Chapter-1-引言"><a href="#Chapter-1-引言" class="headerlink" title="Chapter 1 (引言)"></a>Chapter 1 (引言)</h4><ul>
-<li>设置</li>
-<li>基本语言</li>
-<li>LLVM 介绍</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter-2-语法分析-Parser-和抽象语法树-AST"><a href="#Chapter-2-语法分析-Parser-和抽象语法树-AST" class="headerlink" title="Chapter 2 (语法分析(Parser)和抽象语法树(AST))"></a>Chapter 2 (语法分析(Parser)和抽象语法树(AST))</h4><ul>
-<li>Parser组合子(Parser Combinator)</li>
-<li>词法分析器(Lexer)</li>
-<li>语法分析器(Parser)</li>
-<li>REPL</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter-3-代码生成"><a href="#Chapter-3-代码生成" class="headerlink" title="Chapter 3 (代码生成)"></a>Chapter 3 (代码生成)</h4><ul>
-<li>Haskell LLVM绑定</li>
-<li>代码生成设置</li>
-<li>代码块(Blocks)</li>
-<li>指令(Instruction)</li>
-<li>从抽象语法树到中间语言(IR)</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter-4-JIT-和优化器支持"><a href="#Chapter-4-JIT-和优化器支持" class="headerlink" title="Chapter 4 (JIT 和优化器支持)"></a>Chapter 4 (JIT 和优化器支持)</h4><ul>
-<li>抽象语法树和模块(Modules)</li>
-<li>常量折叠(Constant Folding)</li>
-<li>Optimization Passes(优化阶段？)</li>
-<li>添加一个JIT编译器</li>
-<li>外部函数</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter-5-控制流"><a href="#Chapter-5-控制流" class="headerlink" title="Chapter 5 (控制流)"></a>Chapter 5 (控制流)</h4><ul>
-<li>“if”表达式</li>
-<li>“for”循环表达式</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter-6-运算符"><a href="#Chapter-6-运算符" class="headerlink" title="Chapter 6 (运算符)"></a>Chapter 6 (运算符)</h4><ul>
-<li>用户定义的运算符</li>
-<li>二元运算符</li>
-<li>一元运算符</li>
-<li>Kicking the Tires  &lt;- 这个太不好翻译了（逃</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter-7-变量"><a href="#Chapter-7-变量" class="headerlink" title="Chapter 7 (变量)"></a>Chapter 7 (变量)</h4><ul>
-<li>为什么这是一个困难的问题</li>
-<li>LLVM中的内存</li>
-<li>变量</li>
-<li>赋值</li>
-<li>完整源码</li>
-</ul>
-<h4 id="Chapter-8-结语"><a href="#Chapter-8-结语" class="headerlink" title="Chapter 8 (结语)"></a>Chapter 8 (结语)</h4><ul>
-<li>教程总结</li>
-</ul>
-<h4 id="Chapter-9-附录"><a href="#Chapter-9-附录" class="headerlink" title="Chapter 9 (附录)"></a>Chapter 9 (附录)</h4><ul>
-<li>命令行工具</li>
-</ul>
-<p>如果有时间的话大概会实现一些扩展功能，到时候再加上吧。</p>
-<hr>
-
+        <h2 id="Readings"><a href="#Readings" class="headerlink" title="Readings"></a>Readings</h2>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/" data-id="cio9rz3sm0005fh207ol9xbel" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/readings/index.html" data-id="cio9urzzd0000lz20ezym844r" class="article-share-link">Share</a>
       
-        <a href="http://superhex.github.io/2015/11/01/Implementing-a-JIT-compiled-Language/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://superhex.github.io/readings/index.html#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Haskell/">Haskell</a></li></ul>
-
     </footer>
   </div>
+  
+    
   
 </article>
 
 
-  
-  
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
 </section>
         
           <aside id="sidebar">
@@ -264,11 +195,13 @@
 <script>
   var disqus_shortname = 'coderenaissance';
   
+  var disqus_url = 'http://superhex.github.io/readings/index.html';
+  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//go.disqus.com/count.js';
+    dsq.src = '//go.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>

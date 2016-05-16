@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Emacs配置流水账 | 妄想神社</title>
+  <title>Emacs配置流水账 | Phantom Shrine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="一直看Haskell群里的人安利Emacs，于是想试试看到底怎么样。遇到的问题什么的大概都会堆到这里嗯。
 安装Emacs之前也是道听途说Spacemacs这个Emacs发行版做的非常好，于是就偷懒直接用未修改的spacemacs了（其实是不会改吧。
@@ -12,7 +12,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Emacs配置流水账">
 <meta property="og:url" content="http://superhex.github.io/2016/01/29/Emacs配置流水账/index.html">
-<meta property="og:site_name" content="妄想神社">
+<meta property="og:site_name" content="Phantom Shrine">
 <meta property="og:description" content="一直看Haskell群里的人安利Emacs，于是想试试看到底怎么样。遇到的问题什么的大概都会堆到这里嗯。
 安装Emacs之前也是道听途说Spacemacs这个Emacs发行版做的非常好，于是就偷懒直接用未修改的spacemacs了（其实是不会改吧。
 先到GNU官网弄个Emacs原版，然后把spacemacs配置文件clone到~/.emacs.d/就行了。
@@ -25,13 +25,13 @@
 先到GNU官网弄个Emacs原版，然后把spacemacs配置文件clone到~/.emacs.d/就行了。
 安装Haskell-Modespacem">
   
-    <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="Phantom Shrine" type="application/atom+xml">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <script type="text/javascript">
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -53,11 +53,11 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">妄想神社</a>
+        <a href="/" id="logo">Phantom Shrine</a>
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">学院派的Haskell信徒 ｜ 人生苦短，我用Python ｜ 脑洞一时爽，填坑修罗场</a>
+          <a href="/" id="subtitle">Haskell, Programming Languages, Hardware, and Happy Hacking!</a>
         </h2>
       
     </div>
@@ -69,7 +69,9 @@
         
           <a class="main-nav-link" href="/archives">Archives</a>
         
-          <a class="main-nav-link" href="/about">关于</a>
+          <a class="main-nav-link" href="/about">About</a>
+        
+          <a class="main-nav-link" href="/readings">Readings</a>
         
       </nav>
       <nav id="sub-nav">
@@ -108,20 +110,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>一直看Haskell群里的人安利Emacs，于是想试试看到底怎么样。遇到的问题什么的大概都会堆到这里嗯。</p>
-<h2 id="安装Emacs">安装Emacs</h2><p>之前也是道听途说<code>Spacemacs</code>这个Emacs发行版做的非常好，于是就偷懒直接用未修改的spacemacs了（其实是不会改吧。</p>
+<h2 id="安装Emacs"><a href="#安装Emacs" class="headerlink" title="安装Emacs"></a>安装Emacs</h2><p>之前也是道听途说<code>Spacemacs</code>这个Emacs发行版做的非常好，于是就偷懒直接用未修改的spacemacs了（其实是不会改吧。</p>
 <p>先到GNU官网弄个Emacs原版，然后把spacemacs配置文件clone到<code>~/.emacs.d/</code>就行了。</p>
-<h2 id="安装Haskell-Mode">安装Haskell-Mode</h2><p><del>spacemacs默认似乎并不带许多语言的支持，所以第一件事当然是要先装上haskell-mode。按照<a href="https://github.com/haskell/haskell-mode" target="_blank" rel="external">文档</a>一步步来就没问题了。</del></p>
+<h2 id="安装Haskell-Mode"><a href="#安装Haskell-Mode" class="headerlink" title="安装Haskell-Mode"></a>安装Haskell-Mode</h2><p><del>spacemacs默认似乎并不带许多语言的支持，所以第一件事当然是要先装上haskell-mode。按照<a href="https://github.com/haskell/haskell-mode" target="_blank" rel="external">文档</a>一步步来就没问题了。</del></p>
 <p>这么干会被spacemacs无情的删掉！正确的方法请看下面（</p>
 <p>待更。</p>
 <hr>
 <p>2016.01.31 update</p>
 <p>快捷键好多啊orz 而且Evil这货是要我同时背下emacs和vim的快捷键吗！（虽然确实很好用（逃</p>
-<h2 id="install_custom_packages">install custom packages</h2><p>不同于普通的Emacs直接使用<code>M-x package-install</code>，spacemacs竟然会自动删掉这样装好的包… 对于一个啥都不懂的新手来说真是无比嘲讽。出现这个问题的原因是因为spacemacs引入了layer的概念（大概相当于文件夹？），不属于任何layer的包会被当作orphan包删掉… 解决办法：</p>
+<h2 id="install-custom-packages"><a href="#install-custom-packages" class="headerlink" title="install custom packages"></a>install custom packages</h2><p>不同于普通的Emacs直接使用<code>M-x package-install</code>，spacemacs竟然会自动删掉这样装好的包… 对于一个啥都不懂的新手来说真是无比嘲讽。出现这个问题的原因是因为spacemacs引入了layer的概念（大概相当于文件夹？），不属于任何layer的包会被当作orphan包删掉… 解决办法：</p>
 <ul>
 <li>不使用layer</li>
 </ul>
 <p>不使用layer的方法也是可行的，不过最好还是不要这么干。只需要把包加入配置文件中的<code>dotspacemacs-additional-packages</code>就好了。大概就是…</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="list">(<span class="keyword">setq</span> dotspacemacs-additional-packages <span class="quoted">'(&lt;package-1&gt; &lt;package-2&gt; ...)</span>)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">setq</span> dotspacemacs-additional-packages '(&lt;package-1&gt; &lt;package-2&gt; ...))</span><br></pre></td></tr></table></figure>
 <p>然后可以在<code>dotspacemacs/user-config</code>里写配置。</p>
 <ul>
 <li>创建一个自定义layer</li>
@@ -130,20 +132,20 @@
 <p>生成好的文件位于<code>~/.emacs.d/private/&lt;layer&gt;</code>下，结构大概像这样：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[layer-name]</span><br><span class="line">  |__ [local]*</span><br><span class="line">  | |__ [example-mode-1]</span><br><span class="line">  | |     ...</span><br><span class="line">  | |__ [example-mode-n]</span><br><span class="line">  |__ config.el*</span><br><span class="line">  |__ funcs.el*</span><br><span class="line">  |__ keybindings.el*</span><br><span class="line">  |__ packages.el</span><br></pre></td></tr></table></figure>
 <p>看不懂也没什么关系… 只需要打开（<code>C-x C-f</code>）<code>packages.el</code>修改一下就行了。比如我想要装<code>haskell-mode</code>,<code>ghc-mod</code>,<code>structure-haskell-mode</code>这三个插件，那么就要把这里改成这样：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="list">(<span class="keyword">setq</span> Haskell-packages</span><br><span class="line">    <span class="quoted">'(</span><br><span class="line">      ;; package names go here</span><br><span class="line">      haskell-mode</span><br><span class="line">      ghc </span><br><span class="line">      shm </span><br><span class="line">      )</span>)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">setq</span> Haskell-packages</span><br><span class="line">    '(</span><br><span class="line">      ;; package names go here</span><br><span class="line">      haskell-mode</span><br><span class="line">      ghc </span><br><span class="line">      shm </span><br><span class="line">      ))</span><br></pre></td></tr></table></figure>
 <p>这样还不算完成配置，还需要为每一个包定义初始化函数。</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="list">(<span class="keyword">defun</span> Haskell/init-haskell-mode <span class="list">()</span></span><br><span class="line">  <span class="list">(<span class="keyword">use-package</span> haskell-mode)</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="list">(<span class="keyword">defun</span> Haskell/init-ghc <span class="list">()</span></span><br><span class="line">  <span class="list">(<span class="keyword">use-package</span> ghc)</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="list">(<span class="keyword">defun</span> Haskell/init-shm <span class="list">()</span></span><br><span class="line">  <span class="list">(<span class="keyword">use-package</span> shm)</span>)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">defun</span> Haskell/init-haskell-mode ()</span><br><span class="line">  (<span class="name">use-package</span> haskell-mode))</span><br><span class="line"></span><br><span class="line">(<span class="name">defun</span> Haskell/init-ghc ()</span><br><span class="line">  (<span class="name">use-package</span> ghc))</span><br><span class="line"></span><br><span class="line">(<span class="name">defun</span> Haskell/init-shm ()</span><br><span class="line">  (<span class="name">use-package</span> shm))</span><br></pre></td></tr></table></figure>
 <p>这里只用了最简单的<code>use-package</code>变量，更多的用法可以参考<code>use-package</code>的<a href="https://github.com/jwiegley/use-package" target="_blank" rel="external">文档</a>。快捷键什么的，以后再折腾吧。</p>
 <p>配置好以后使用<code>C-x C-s</code>保存，然后<code>SPC f e R</code>可以重新加载配置文件，之后emacs就会安装列出来的这些包了。</p>
-<h2 id="更改主题">更改主题</h2><p>其实本来spacemacs默认的主题给我的印象还不错，直到我打开了一个haskell文件… 所以更换一个更顺眼的主题就是下一个折腾的目标了。毕竟现在还不会手写emacs lisp来搞一些黑科技，所以姑且就先求助于<code>themes-megapack</code>吧。</p>
+<h2 id="更改主题"><a href="#更改主题" class="headerlink" title="更改主题"></a>更改主题</h2><p>其实本来spacemacs默认的主题给我的印象还不错，直到我打开了一个haskell文件… 所以更换一个更顺眼的主题就是下一个折腾的目标了。毕竟现在还不会手写emacs lisp来搞一些黑科技，所以姑且就先求助于<code>themes-megapack</code>吧。</p>
 <p>这个包好想自带了，所以只需要在<code>~/.spacemacs</code>里面的<code>dotspacemacs-configuration-layers</code>中添加<code>themes-megapack</code>就好了。里面大概有86种主题（虽然好看的没几种），可以在<a href="http://themegallery.robdor.com" target="_blank" rel="external">theme gallery</a>预览。个人还是比较偏好<code>sanityinc-tomorrow-night</code>啦，<code>monokai</code>在这里支持的着色似乎有些少？</p>
 <p>可以使用<code>SPC T h</code>来选择主题，但需要注意的是这不是永久变更。如果更改每次启动时加载的主题的话，需要把<code>~/.spacemacs</code>里面的<code>dotspacemacs-themes</code>的第一项改成选好的主题名字。</p>
 <hr>
 <p>2016.02.01 update</p>
-<h2 id="添加自动补全">添加自动补全</h2><p>话说默认竟然是没有自动补全的还是有点不爽，虽然什么都自己动手来大概就是开源社区的哲学吧（。打开基础的补全功能需要<code>auto-complete</code>这个插件，在<code>.spacemacs</code>里取消注释就行了。之后需要为<code>auto-complete</code>提供一个后端，这里用<code>company-ghc</code>。安装什么的都和上面一样，配置里要显示指明一下：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="list">(<span class="keyword">defun</span> haskell/init-company-ghc <span class="list">()</span></span><br><span class="line">  <span class="list">(<span class="keyword">use-package</span> company-ghc)</span></span><br><span class="line">  <span class="keyword">:init</span></span><br><span class="line">  <span class="list">(<span class="keyword">require</span> <span class="quoted">'company</span>)</span></span><br><span class="line">  <span class="list">(<span class="keyword">add-hook</span> <span class="quoted">'after-init-hook</span> <span class="quoted">'global-company-mode</span>)</span> <span class="comment">;; global mode</span></span><br><span class="line">  <span class="list">(<span class="keyword">add-to-list</span> <span class="quoted">'company-backends</span> <span class="quoted">'company-ghc</span>)</span></span><br><span class="line">  <span class="list">(<span class="keyword">custom-set-variables</span> <span class="quoted">'(company-ghc-show-info t)</span>)</span>)</span></span><br></pre></td></tr></table></figure>
+<h2 id="添加自动补全"><a href="#添加自动补全" class="headerlink" title="添加自动补全"></a>添加自动补全</h2><p>话说默认竟然是没有自动补全的还是有点不爽，虽然什么都自己动手来大概就是开源社区的哲学吧（。打开基础的补全功能需要<code>auto-complete</code>这个插件，在<code>.spacemacs</code>里取消注释就行了。之后需要为<code>auto-complete</code>提供一个后端，这里用<code>company-ghc</code>。安装什么的都和上面一样，配置里要显示指明一下：</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">defun</span> haskell/init-company-ghc ()</span><br><span class="line">  (<span class="name">use-package</span> company-ghc)</span><br><span class="line">  <span class="symbol">:init</span></span><br><span class="line">  (<span class="name">require</span> 'company)</span><br><span class="line">  (<span class="name">add-hook</span> 'after-init-hook 'global-company-mode) <span class="comment">;; global mode</span></span><br><span class="line">  (<span class="name">add-to-list</span> 'company-backends 'company-ghc)</span><br><span class="line">  (<span class="name">custom-set-variables</span> '(company-ghc-show-info t)))</span><br></pre></td></tr></table></figure>
 <p>这样就能实现函数的补全了。标准库什么的完全没问题！不过目前来看还有两个缺点，一个是启动时速度有些慢，另一个比较烦的是没法补全模块名称。这个哪天再折腾一下吧。</p>
-<h2 id="haskell-mode的一些完善工作">haskell-mode的一些完善工作</h2><p>首先，装一些不错的包</p>
+<h2 id="haskell-mode的一些完善工作"><a href="#haskell-mode的一些完善工作" class="headerlink" title="haskell-mode的一些完善工作"></a>haskell-mode的一些完善工作</h2><p>首先，装一些不错的包</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cabal install hasktags structured-haskell-mode stylish-haskell present</span><br></pre></td></tr></table></figure>
 <p>给haskell-mode添加一些key-bindings</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">;; (defun haskell/init-haskell-mode ()</span><br><span class="line">;; ...</span><br><span class="line">:config</span><br><span class="line">(custom-set-variables</span><br><span class="line">  '(haskell-process-suggest-remove-import-lines t)</span><br><span class="line">  '(haskell-process-auto-import-loaded-modules t)</span><br><span class="line">  '(haskell-process-log t)</span><br><span class="line">  ;; add cabal repl support.if use stack, replace 'cabal-repl with 'stack-ghci.</span><br><span class="line">  '(haskell-process-type 'cabal-repl))</span><br><span class="line">  </span><br><span class="line">(eval-after-load 'haskell-mode '(progn</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)</span><br><span class="line">  (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)</span><br><span class="line">  (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)))</span><br><span class="line">(eval-after-load 'haskell-cabal '(progn</span><br><span class="line">  (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)</span><br><span class="line">  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)</span><br><span class="line">  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)</span><br><span class="line">  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))</span><br></pre></td></tr></table></figure>
@@ -155,7 +157,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cio8quvtp0013ol204a2eccsw" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2016/01/29/Emacs配置流水账/" data-id="cio9rz3se0002fh20koi7q1xo" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2016/01/29/Emacs配置流水账/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -204,7 +206,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -213,7 +215,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -223,6 +225,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/05/16/Reading-Note-The-Implementation-of-Functional-Programming-Languages/">Reading Note: The Implementation of Functional Programming Languages</a>
+          </li>
         
           <li>
             <a href="/2016/02/14/行程备忘/">行程备忘</a>
@@ -238,10 +244,6 @@
         
           <li>
             <a href="/2016/01/29/Emacs配置流水账/">Emacs配置流水账</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/27/coroutine/">使用Continuation Monad实现Coroutine</a>
           </li>
         
       </ul>
@@ -268,7 +270,9 @@
   
     <a href="/archives" class="mobile-nav-link">Archives</a>
   
-    <a href="/about" class="mobile-nav-link">关于</a>
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+    <a href="/readings" class="mobile-nav-link">Readings</a>
   
 </nav>
     
@@ -290,11 +294,11 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
   </div>
 </body>
 </html>

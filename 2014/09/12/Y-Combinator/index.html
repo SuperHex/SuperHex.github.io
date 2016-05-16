@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>［译］The Y Combinator | 妄想神社</title>
+  <title>［译］The Y Combinator | Phantom Shrine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="原文地址：猛击这里
 博主竟然还是萌妹（误。
@@ -17,7 +17,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="［译］The Y Combinator">
 <meta property="og:url" content="http://superhex.github.io/2014/09/12/Y-Combinator/index.html">
-<meta property="og:site_name" content="妄想神社">
+<meta property="og:site_name" content="Phantom Shrine">
 <meta property="og:description" content="原文地址：猛击这里
 博主竟然还是萌妹（误。
 
@@ -40,14 +40,15 @@
 λf. (λx. f (x x))(λx. f (x x))
 
 不不，请不要逃跑！（的确很想就是了…）这是为什么Y Combinator为什">
+<meta name="twitter:image" content="https://d262ilb51hltx0.cloudfront.net/max/995/1*qoIjQtBaEhxT2RgjWWD6fg.jpeg">
   
-    <link rel="alternative" href="/atom.xml" title="妄想神社" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="Phantom Shrine" type="application/atom+xml">
   
   
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
   
 <script type="text/javascript">
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -69,11 +70,11 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">妄想神社</a>
+        <a href="/" id="logo">Phantom Shrine</a>
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">学院派的Haskell信徒 ｜ 人生苦短，我用Python ｜ 脑洞一时爽，填坑修罗场</a>
+          <a href="/" id="subtitle">Haskell, Programming Languages, Hardware, and Happy Hacking!</a>
         </h2>
       
     </div>
@@ -85,7 +86,9 @@
         
           <a class="main-nav-link" href="/archives">Archives</a>
         
-          <a class="main-nav-link" href="/about">关于</a>
+          <a class="main-nav-link" href="/about">About</a>
+        
+          <a class="main-nav-link" href="/readings">Readings</a>
         
       </nav>
       <nav id="sub-nav">
@@ -140,7 +143,7 @@
 <li>函数式编程中，函数调用的形式是 <em>(f x y)</em> 而不是 <em>f(x y)</em></li>
 <li>符号”:=”代表”等于”的意思</li>
 </ul>
-<h2 id="Lambda_演算">Lambda 演算</h2><hr>
+<h2 id="Lambda-演算"><a href="#Lambda-演算" class="headerlink" title="Lambda 演算"></a>Lambda 演算</h2><hr>
 <p>Lambda演算（或λ－演算）是在1930年被Alonzo Church作为一种表达计算的形式系统（formal system for expressing computation）发明的。尽管其中有“微积分”一词（calculus），它却与牛顿和莱布尼兹发明的微积分相差很远。事实上，它在计算机领域的应用要比数学上要多，就我们大多数人所知。</p>
 <p>有效的Lambda表达式可以用归纳法如下定义：<br><a name="rule1"></a></p>
 <ol>
@@ -173,13 +176,13 @@
 <p>λx. x<br>λy. y<br>λz. z<br>λ☃. ☃</p>
 </blockquote>
 <p>这将带领我们来到对 <strong>约束变量</strong> 和 <strong>自由变量</strong> 的讨论。</p>
-<h2 id="##约束变量_vs-_自由变量">##约束变量 vs. 自由变量</h2><p>一个<strong>约束</strong>变量是在<em>λ</em> 的表达式中出现的变量并与参数具有相同的名字。一个<strong>自由</strong>变量是一个不是约束变量的变量。</p>
+<h2 id="约束变量-vs-自由变量"><a href="#约束变量-vs-自由变量" class="headerlink" title="##约束变量 vs. 自由变量"></a>##约束变量 vs. 自由变量</h2><p>一个<strong>约束</strong>变量是在<em>λ</em> 的表达式中出现的变量并与参数具有相同的名字。一个<strong>自由</strong>变量是一个不是约束变量的变量。</p>
 <p>举个例子，<em>x</em> 在 <em>λx. x</em> 中是一个约束变量，在 <em>(λy.y)x</em> 中是自由变量（传入参数）。</p>
 <p>关于约束变量比较特殊的一点是你可以任意的重命名他们，只要对所有的变量应用就没问题。如果两个λ表达式在经过重命名后是一样的，那么就称他们是 <strong>α相等（α-equivalent）</strong>。</p>
 <p>来看一个实际的例子：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m = -&gt;(horrible_variable_name) &#123; horrible_variable_name * y &#125;</span><br></pre></td></tr></table></figure></p>
 <p>在这个例子中，把<code>horrible_variable_name</code>（约束变量）重命名是很安全的（例如x）：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m = -&gt;(x) &#123; x * y &#125;</span><br></pre></td></tr></table></figure></p>
 <p>注意，你不能去重命名<em>y</em>，因为它是在区域外被定义的。或许<em>y</em>被定义为数字<code>2</code>，并且<code>m</code>是一个函数将自己的输入乘以<code>2</code>。如果我们直接讲<em>y</em>重命名为<em>z</em>（让我们假设它被定义为<code>0</code>），m将会变成一个永远返回<code>0</code>的函数呢。</p>
-<h2 id="##函数应用">##函数应用</h2><p>太酷了，我们有了函数！但是它的参数是什么呢？这时野生的规则3就跳出来了！</p>
+<h2 id="函数应用"><a href="#函数应用" class="headerlink" title="##函数应用"></a>##函数应用</h2><p>太酷了，我们有了函数！但是它的参数是什么呢？这时野生的规则3就跳出来了！</p>
 <blockquote>
 <p>如果 <strong>t</strong> 和 <strong>s</strong> 都是有效的Lambda表达式，那么 <strong>t s</strong> 是一个有效的Lambda表达式</p>
 </blockquote>
@@ -230,7 +233,7 @@
 <p>如果这引起了你的好奇心，那么我推荐你读一下Douglas Hofstadter的 <em>Gödel, Escher, Bach</em>（译注：中文名似乎叫 <em>GEB:集异璧之大成</em> 传说中原作者参与翻译的中译本，不可多得的奇书）。到目前为止我只读了一半，感觉就像在埃舍尔的迷宫中漫游一样。相信我，迷失在其中是值得的，但是我好像跑题了（笑。</p>
 <p><img src="https://d262ilb51hltx0.cloudfront.net/max/995/1*qoIjQtBaEhxT2RgjWWD6fg.jpeg" alt="Escher&#39;s labyrinth"></p>
 <p>那么，我们是如何在不采用自我引用的情况下达到自我引用呢？我想是时候回顾一下我们的神秘朋友，Y不动点组合子了。</p>
-<h2 id="##终焉，Y_Combinator">##终焉，Y Combinator</h2><p>来回顾一下我们的老朋友：</p>
+<h2 id="终焉，Y-Combinator"><a href="#终焉，Y-Combinator" class="headerlink" title="##终焉，Y Combinator"></a>##终焉，Y Combinator</h2><p>来回顾一下我们的老朋友：</p>
 <blockquote>
 <p>λf. (λx. f (x x))(λx. f (x x))</p>
 </blockquote>
@@ -250,7 +253,7 @@
 <p>顺着这个想法，如果我们找到一个<em>F</em>的不动点<em>p</em>使得<em>Fp</em>等于<em>p</em>，我们就可以用<em>Fp</em>或者<em>p</em>（它们是同一种东西）作为那个没有直接自我引用的“递归函数”。</p>
 <p>显然对于任意的λ表达式<em>f</em>，<em>(λx. f (x x))(λx. f (x x))</em>是它的一个不动点。</p>
 <p>让我们看看这是怎么一回事。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X = (&#955;x. f (x x))(&#955;x. f (x x))&#10;X = f (x x) [x := &#955;x. f (x x)]&#10;X = f ((&#955;x. f (x x)) (&#955;x. f (x x)))&#10;X = f X</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">X = (λx. f (x x))(λx. f (x x))</span><br><span class="line">X = f (x x) [x := λx. f (x x)]</span><br><span class="line">X = f ((λx. f (x x)) (λx. f (x x)))</span><br><span class="line">X = f X</span><br></pre></td></tr></table></figure>
 <p>你可以看到，对于任意的函数<em>f</em>，输入<em>X</em>保持不变。</p>
 <p>得知了这一点，我们就可以构造一个函数，其参数为一个函数<em>f</em>并返回它的不动点：</p>
 <blockquote>
@@ -271,7 +274,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cio8quvt7000kol20lwx0ftdl" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/2014/09/12/Y-Combinator/" data-id="cio9rz3ta000nfh206tm4dga5" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/2014/09/12/Y-Combinator/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -320,7 +323,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -329,7 +332,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -339,6 +342,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/05/16/Reading-Note-The-Implementation-of-Functional-Programming-Languages/">Reading Note: The Implementation of Functional Programming Languages</a>
+          </li>
         
           <li>
             <a href="/2016/02/14/行程备忘/">行程备忘</a>
@@ -354,10 +361,6 @@
         
           <li>
             <a href="/2016/01/29/Emacs配置流水账/">Emacs配置流水账</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/27/coroutine/">使用Continuation Monad实现Coroutine</a>
           </li>
         
       </ul>
@@ -384,7 +387,9 @@
   
     <a href="/archives" class="mobile-nav-link">Archives</a>
   
-    <a href="/about" class="mobile-nav-link">关于</a>
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+    <a href="/readings" class="mobile-nav-link">Readings</a>
   
 </nav>
     
@@ -406,11 +411,11 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
-<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/script.js"></script>
   </div>
 </body>
 </html>
