@@ -5,16 +5,37 @@
   
   <title>Phantom Shrine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="The Lambda Calculus">
+  <meta name="description" content="The Lambda CalculusSyntaxLambda演算的基本语法像这样：
+1(+ 4 5)
+运算符用前缀记法来表示。嵌套的运算则这样表示：
+1(+ (* 2 4) (* 3 8))
+要注意的是这里的求值顺序实际上是不确定的，比如我们可以
+1234(+ (* 2 4) (* 3 8))(+ 8       (* 3 8))(+ 8       24     )32
+也可以
+1234(+">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Phantom Shrine">
 <meta property="og:url" content="http://superhex.github.io/readings/The-Implementation-of-Functional-Programming-Languages/Chapter1.html">
 <meta property="og:site_name" content="Phantom Shrine">
-<meta property="og:description" content="The Lambda Calculus">
-<meta property="og:updated_time" content="2016-05-16T10:23:42.000Z">
+<meta property="og:description" content="The Lambda CalculusSyntaxLambda演算的基本语法像这样：
+1(+ 4 5)
+运算符用前缀记法来表示。嵌套的运算则这样表示：
+1(+ (* 2 4) (* 3 8))
+要注意的是这里的求值顺序实际上是不确定的，比如我们可以
+1234(+ (* 2 4) (* 3 8))(+ 8       (* 3 8))(+ 8       24     )32
+也可以
+1234(+">
+<meta property="og:updated_time" content="2016-05-18T14:42:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Phantom Shrine">
-<meta name="twitter:description" content="The Lambda Calculus">
+<meta name="twitter:description" content="The Lambda CalculusSyntaxLambda演算的基本语法像这样：
+1(+ 4 5)
+运算符用前缀记法来表示。嵌套的运算则这样表示：
+1(+ (* 2 4) (* 3 8))
+要注意的是这里的求值顺序实际上是不确定的，比如我们可以
+1234(+ (* 2 4) (* 3 8))(+ 8       (* 3 8))(+ 8       24     )32
+也可以
+1234(+">
   
     <link rel="alternative" href="/atom.xml" title="Phantom Shrine" type="application/atom+xml">
   
@@ -81,7 +102,7 @@
         <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/readings/The-Implementation-of-Functional-Programming-Languages/Chapter1.html" class="article-date">
-  <time datetime="2016-05-16T10:23:42.000Z" itemprop="datePublished">5月 16 2016</time>
+  <time datetime="2016-05-18T14:42:30.000Z" itemprop="datePublished">5月 18 2016</time>
 </a>
     
   </div>
@@ -90,11 +111,33 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="The-Lambda-Calculus"><a href="#The-Lambda-Calculus" class="headerlink" title="The Lambda Calculus"></a>The Lambda Calculus</h1>
+        <h1 id="The-Lambda-Calculus"><a href="#The-Lambda-Calculus" class="headerlink" title="The Lambda Calculus"></a>The Lambda Calculus</h1><h2 id="Syntax"><a href="#Syntax" class="headerlink" title="Syntax"></a>Syntax</h2><p>Lambda演算的基本语法像这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(+ 4 5)</span><br></pre></td></tr></table></figure>
+<p>运算符用前缀记法来表示。嵌套的运算则这样表示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(+ (* 2 4) (* 3 8))</span><br></pre></td></tr></table></figure>
+<p>要注意的是这里的求值顺序实际上是不确定的，比如我们可以</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(+ (* 2 4) (* 3 8))</span><br><span class="line">(+ 8       (* 3 8))</span><br><span class="line">(+ 8       24     )</span><br><span class="line">32</span><br></pre></td></tr></table></figure>
+<p>也可以</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(+ (* 2 4) (* 3 8))</span><br><span class="line">(+ (* 2 4) 24     )</span><br><span class="line">(+ 8       24     )</span><br><span class="line">32</span><br></pre></td></tr></table></figure>
+<p>求值顺序的不确定将在后面的章节探讨。</p>
+<p>PS. 这里的语法和Lisp好像。</p>
+<h3 id="函数和柯里化"><a href="#函数和柯里化" class="headerlink" title="函数和柯里化"></a>函数和柯里化</h3><p>函数应用在函数式语言中太重要了以至于这里省略了括号（是的！）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f x</span><br></pre></td></tr></table></figure>
+<p>表示“函数f应用到参数x”。但是多个参数怎么办呢？当然我们可以写<code>(f (x,y))</code>，不过我们可以利用柯里化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">((+3) 4)</span><br></pre></td></tr></table></figure>
+<p>一次只应用一个参数。</p>
+<h3 id="括号"><a href="#括号" class="headerlink" title="括号"></a>括号</h3><p>没有歧义的情况下，我们可以省略不必要的括号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(+ 2 3)</span><br><span class="line">+ 2 3</span><br></pre></td></tr></table></figure>
+<h3 id="lambda抽象"><a href="#lambda抽象" class="headerlink" title="lambda抽象"></a>lambda抽象</h3><p>定义一个函数很简单，只需要</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(λx . + x 1)</span><br></pre></td></tr></table></figure>
+<p>定义了一个函数以<code>x</code>为参数，将<code>x</code>加一。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Lambda演算有这样的文法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;exp&gt; ::= &lt;constant&gt;            内建常数</span><br><span class="line">      |   &lt;variable&gt;            变量名字</span><br><span class="line">      |   &lt;exp&gt; &lt;exp&gt;           函数应用</span><br><span class="line">      |   λ &lt;variable&gt; . &lt;exp&gt;  Lambda抽象(函数定义)</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/readings/The-Implementation-of-Functional-Programming-Languages/Chapter1.html" data-id="cio9v5xjk0000p2204vj0uxh1" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/readings/The-Implementation-of-Functional-Programming-Languages/Chapter1.html" data-id="ciocz4jrd001do3207pdlc9b2" class="article-share-link">Share</a>
       
         <a href="http://superhex.github.io/readings/The-Implementation-of-Functional-Programming-Languages/Chapter1.html#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -122,7 +165,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/科学上网/">科学上网</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Arduino/">Arduino</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/">Emacs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Haskell/">Haskell</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/瞎扯/">瞎扯</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/脑洞/">脑洞</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -131,7 +174,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
