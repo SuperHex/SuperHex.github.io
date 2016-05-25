@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2016 | Phantom Shrine</title>
+  <title>Phantom Shrine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
+  <meta name="description" content="将函数式语言翻译为Lambda演算">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Phantom Shrine">
-<meta property="og:url" content="http://superhex.github.io/archives/2016/page/2/index.html">
+<meta property="og:url" content="http://superhex.github.io/readings/The-Implementation-of-Functional-Programming-Languages/Chapter3.html">
 <meta property="og:site_name" content="Phantom Shrine">
-<meta property="og:description">
+<meta property="og:description" content="将函数式语言翻译为Lambda演算">
+<meta property="og:updated_time" content="2016-05-25T16:23:06.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Phantom Shrine">
-<meta name="twitter:description">
+<meta name="twitter:description" content="将函数式语言翻译为Lambda演算">
   
     <link rel="alternative" href="/atom.xml" title="Phantom Shrine" type="application/atom+xml">
   
@@ -77,58 +78,40 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-Template-template-parameters" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/01/05/Template-template-parameters/" class="article-date">
-  <time datetime="2016-01-05T14:28:27.000Z" itemprop="datePublished">1月 5 2016</time>
+    <a href="/readings/The-Implementation-of-Functional-Programming-Languages/Chapter3.html" class="article-date">
+  <time datetime="2016-05-25T16:23:06.000Z" itemprop="datePublished">5月 26 2016</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/05/Template-template-parameters/">Template-template parameters</a>
-    </h1>
-  
-
-      </header>
-    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>虽说早就听闻C++的模版是图灵完全的，不过当看到这样的用法的时候，还是不禁感叹这实在是太酷了！写Haskell风格的C++指日可待！</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">template</span> &lt;<span class="keyword">typename</span>&gt; <span class="keyword">class</span> m&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> m&lt;b&gt; mbind(<span class="keyword">const</span> m&lt;a&gt;&amp;, m&lt;b&gt;(*)(const a&amp;));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line"><span class="keyword">struct</span> Maybe &#123;</span><br><span class="line">    <span class="keyword">bool</span> isNothing;</span><br><span class="line">    a value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="keyword">struct</span> Monad&lt;Maybe&gt; &#123;</span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;a&gt; mreturn(<span class="keyword">const</span> a&amp; v) &#123;</span><br><span class="line">        Maybe&lt;a&gt; x;</span><br><span class="line">        x.isNothing = <span class="literal">false</span>;</span><br><span class="line">        x.value = v;</span><br><span class="line">        return x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> a, <span class="keyword">typename</span> b&gt;</span><br><span class="line">    <span class="keyword">static</span> Maybe&lt;b&gt; mbind(<span class="keyword">const</span> Maybe&lt;a&gt;&amp; action, Maybe&lt;b&gt;(*function)(const a&amp;)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (action.isNothing)</span><br><span class="line">            return action;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            return function(action.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>相关链接：</p>
-<p><a href="http://stackoverflow.com/questions/2565097/higher-kinded-types-with-c" target="_blank" rel="external">Higher-kinded Types with C++</a></p>
-<p><a href="http://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters-in-c" target="_blank" rel="external">What are some uses of template template parameters in C++?</a></p>
-
+        <h2 id="将函数式语言翻译为Lambda演算"><a href="#将函数式语言翻译为Lambda演算" class="headerlink" title="将函数式语言翻译为Lambda演算"></a>将函数式语言翻译为Lambda演算</h2>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://superhex.github.io/2016/01/05/Template-template-parameters/" data-id="cion0z968000g1820jtv0qxai" class="article-share-link">Share</a>
+      <a data-url="http://superhex.github.io/readings/The-Implementation-of-Functional-Programming-Languages/Chapter3.html" data-id="cion2xskv00002620y9zogvp6" class="article-share-link">Share</a>
       
-        <a href="http://superhex.github.io/2016/01/05/Template-template-parameters/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://superhex.github.io/readings/The-Implementation-of-Functional-Programming-Languages/Chapter3.html#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C++</a></li></ul>
-
     </footer>
   </div>
+  
+    
   
 </article>
 
 
-  
-  
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2016/">&laquo; Prev</a><a class="page-number" href="/archives/2016/">1</a><span class="page-number current">2</span>
-    </nav>
-  
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
 </section>
         
           <aside id="sidebar">
@@ -212,11 +195,13 @@
 <script>
   var disqus_shortname = 'coderenaissance';
   
+  var disqus_url = 'http://superhex.github.io/readings/The-Implementation-of-Functional-Programming-Languages/Chapter3.html';
+  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//go.disqus.com/count.js';
+    dsq.src = '//go.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>
